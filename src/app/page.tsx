@@ -1,103 +1,484 @@
-import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Nexo Mark | Global Experts in Web, SEO, Design & Marketing",
+  description:
+    "Top rated digital agency delivering web development, UI/UX, SEO, digital marketing, graphic design, video editing and 3D services. Powering growth for brands in 10+ countries.",
+
+  keywords: [
+    // ===== USA (40+ Cities) =====
+    "web development New York",
+    "SEO services Los Angeles",
+    "digital marketing Chicago",
+    "UI/UX design Houston",
+    "graphic design Phoenix",
+    "video editing Philadelphia",
+    "3D animation San Antonio",
+    "e-commerce development San Diego",
+    "app development Dallas",
+    "WordPress experts San Jose",
+    "local SEO Austin",
+    "social media marketing Jacksonville",
+    "branding services Fort Worth",
+    "motion graphics Columbus",
+    "web design Charlotte",
+    "Google Ads management San Francisco",
+    "Shopify developers Indianapolis",
+    "YouTube video editing Seattle",
+    "logo design Denver",
+    "email marketing Washington DC",
+    "React.js developers Boston",
+    "Adobe XD experts El Paso",
+    "Laravel developers Nashville",
+    "content marketing Detroit",
+    "product photography Oklahoma City",
+    "AR/VR development Portland",
+    "technical SEO Las Vegas",
+    "B2B marketing Memphis",
+    "B2C marketing Louisville",
+    "Wix developers Baltimore",
+    "Squarespace design Milwaukee",
+    "animation services Albuquerque",
+    "corporate video editing Tucson",
+    "explainer videos Fresno",
+    "architectural visualization Sacramento",
+    "product modeling Kansas City",
+    "Google My Business optimization Mesa",
+    "Facebook Ads management Atlanta",
+    "Instagram marketing Colorado Springs",
+    "TikTok advertising Raleigh",
+    "LinkedIn marketing Omaha",
+
+    // ===== UK (40+ Cities) =====
+    "web design London",
+    "SEO Manchester",
+    "digital marketing Birmingham",
+    "UI/UX Leeds",
+    "graphic design Glasgow",
+    "video production Liverpool",
+    "3D services Bristol",
+    "e-commerce Sheffield",
+    "app development Newcastle",
+    "WordPress experts Bradford",
+    "local SEO Leicester",
+    "social media Nottingham",
+    "branding Southampton",
+    "motion graphics Belfast",
+    "web development Plymouth",
+    "Google Ads Derby",
+    "Shopify Stoke-on-Trent",
+    "YouTube editing Coventry",
+    "logo design Sunderland",
+    "email marketing Brighton",
+    "React.js Wolverhampton",
+    "Adobe XD Salford",
+    "Laravel Portsmouth",
+    "content marketing Reading",
+    "product photography Preston",
+    "AR/VR Newport",
+    "technical SEO Swansea",
+    "B2B marketing Cambridge",
+    "B2C Oxford",
+    "Wix developers Norwich",
+    "Squarespace Peterborough",
+    "animation York",
+    "corporate video Bath",
+    "explainer videos Chester",
+    "architectural visualization Exeter",
+    "product modeling Cheltenham",
+    "Google My Business Lincoln",
+    "Facebook Ads Gloucester",
+    "Instagram Canterbury",
+    "TikTok Stratford-upon-Avon",
+    "LinkedIn Winchester",
+
+    // ===== Canada (40+ Cities) =====
+    "web development Toronto",
+    "SEO Vancouver",
+    "digital marketing Montreal",
+    "UI/UX Calgary",
+    "graphic design Ottawa",
+    "video editing Edmonton",
+    "3D animation Winnipeg",
+    "e-commerce Mississauga",
+    "app development Brampton",
+    "WordPress Hamilton",
+    "local SEO Quebec City",
+    "social media Surrey",
+    "branding Laval",
+    "motion graphics Halifax",
+    "web design London ON",
+    "Google Ads Markham",
+    "Shopify Vaughan",
+    "YouTube editing Gatineau",
+    "logo design Saskatoon",
+    "email marketing Longueuil",
+    "React.js Kitchener",
+    "Adobe XD Burnaby",
+    "Laravel Windsor",
+    "content marketing Regina",
+    "product photography Richmond",
+    "AR/VR Richmond Hill",
+    "technical SEO Oakville",
+    "B2B marketing Burlington",
+    "B2C Greater Sudbury",
+    "Wix developers Sherbrooke",
+    "Squarespace Abbotsford",
+    "animation Coquitlam",
+    "corporate video Barrie",
+    "explainer videos St. Catharines",
+    "architectural visualization Kelowna",
+    "product modeling Cambridge ON",
+    "Google My Business Whitby",
+    "Facebook Ads Kingston",
+    "Instagram Guelph",
+    "TikTok Thunder Bay",
+    "LinkedIn Waterloo",
+
+    // ===== Australia (40+ Cities) =====
+    "web development Sydney",
+    "SEO Melbourne",
+    "digital marketing Brisbane",
+    "UI/UX Perth",
+    "graphic design Adelaide",
+    "video editing Gold Coast",
+    "3D animation Canberra",
+    "e-commerce Newcastle NSW",
+    "app development Wollongong",
+    "WordPress Sunshine Coast",
+    "local SEO Hobart",
+    "social media Geelong",
+    "branding Townsville",
+    "motion graphics Cairns",
+    "web design Darwin",
+    "Google Ads Toowoomba",
+    "Shopify Ballarat",
+    "YouTube editing Bendigo",
+    "logo design Albury-Wodonga",
+    "email marketing Launceston",
+    "React.js Mackay",
+    "Adobe XD Rockhampton",
+    "Laravel Bunbury",
+    "content marketing Bundaberg",
+    "product photography Coffs Harbour",
+    "AR/VR Wagga Wagga",
+    "technical SEO Hervey Bay",
+    "B2B marketing Mildura",
+    "B2C Shepparton",
+    "Wix developers Port Macquarie",
+    "Squarespace Gladstone",
+    "animation Tamworth",
+    "corporate video Orange",
+    "explainer videos Dubbo",
+    "architectural visualization Geraldton",
+    "product modeling Nowra",
+    "Google My Business Bathurst",
+    "Facebook Ads Warrnambool",
+    "Instagram Kalgoorlie",
+    "TikTok Lismore",
+    "LinkedIn Mount Gambier",
+
+    // ===== UAE (20 Major Cities) =====
+    "web development Dubai",
+    "SEO Abu Dhabi",
+    "digital marketing Sharjah",
+    "UI/UX Al Ain",
+    "graphic design Ajman",
+    "video editing Ras Al Khaimah",
+    "3D animation Fujairah",
+    "e-commerce Umm Al Quwain",
+    "app development Khor Fakkan",
+    "WordPress Dibba Al-Fujairah",
+    "local SEO Jebel Ali",
+    "social media Ruwais",
+    "branding Ghayathi",
+    "motion graphics Liwa Oasis",
+    "web design Ar-Rams",
+    "Google Ads Dhaid",
+    "Shopify Al Madam",
+    "YouTube editing Hatta",
+    "logo design Al Mirfa",
+    "email marketing Al Sila",
+
+    // ===== Germany (40+ Cities) =====
+    "web development Berlin",
+    "SEO Hamburg",
+    "digital marketing Munich",
+    "UI/UX Cologne",
+    "graphic design Frankfurt",
+    "video editing Stuttgart",
+    "3D animation Düsseldorf",
+    "e-commerce Dortmund",
+    "app development Essen",
+    "WordPress Leipzig",
+    "local SEO Bremen",
+    "social media Dresden",
+    "branding Hannover",
+    "motion graphics Nuremberg",
+    "web design Duisburg",
+    "Google Ads Bochum",
+    "Shopify Wuppertal",
+    "YouTube editing Bielefeld",
+    "logo design Bonn",
+    "email marketing Münster",
+    "React.js Karlsruhe",
+    "Adobe XD Mannheim",
+    "Laravel Augsburg",
+    "content marketing Wiesbaden",
+    "product photography Gelsenkirchen",
+    "AR/VR Mönchengladbach",
+    "technical SEO Braunschweig",
+    "B2B marketing Chemnitz",
+    "B2C Kiel",
+    "Wix developers Aachen",
+    "Squarespace Halle",
+    "animation Magdeburg",
+    "corporate video Freiburg",
+    "explainer videos Krefeld",
+    "architectural visualization Lübeck",
+    "product modeling Oberhausen",
+    "Google My Business Erfurt",
+    "Facebook Ads Mainz",
+    "Instagram Rostock",
+    "TikTok Kassel",
+    "LinkedIn Hagen",
+
+    // ===== France (40+ Cities) =====
+    "web development Paris",
+    "SEO Marseille",
+    "digital marketing Lyon",
+    "UI/UX Toulouse",
+    "graphic design Nice",
+    "video editing Nantes",
+    "3D animation Strasbourg",
+    "e-commerce Montpellier",
+    "app development Bordeaux",
+    "WordPress Lille",
+    "local SEO Rennes",
+    "social media Reims",
+    "branding Saint-Étienne",
+    "motion graphics Toulon",
+    "web design Grenoble",
+    "Google Ads Dijon",
+    "Shopify Angers",
+    "YouTube editing Nîmes",
+    "logo design Villeurbanne",
+    "email marketing Le Mans",
+    "React.js Aix-en-Provence",
+    "Adobe XD Clermont-Ferrand",
+    "Laravel Brest",
+    "content marketing Limoges",
+    "product photography Tours",
+    "AR/VR Amiens",
+    "technical SEO Perpignan",
+    "B2B marketing Metz",
+    "B2C Besançon",
+    "Wix developers Boulogne-Billancourt",
+    "Squarespace Orléans",
+    "animation Mulhouse",
+    "corporate video Caen",
+    "explainer videos Argenteuil",
+    "architectural visualization Saint-Denis",
+    "product modeling Rouen",
+    "Google My Business Dunkirk",
+    "Facebook Ads Poitiers",
+    "Instagram Nancy",
+    "TikTok Versailles",
+    "LinkedIn Courbevoie",
+
+    // ===== Singapore (All Major Areas) =====
+    "web development Singapore",
+    "SEO Orchard Road",
+    "digital marketing Marina Bay",
+    "UI/UX Sentosa",
+    "graphic design Jurong East",
+    "video editing Raffles Place",
+    "3D animation Tampines",
+    "e-commerce Bugis",
+    "app development Clementi",
+    "WordPress Bishan",
+    "local SEO Ang Mo Kio",
+    "social media Serangoon",
+    "branding Woodlands",
+    "motion graphics Punggol",
+    "web design Sengkang",
+    "Google Ads Bukit Timah",
+    "Shopify Hougang",
+    "YouTube editing Yishun",
+    "logo design Choa Chu Kang",
+    "email marketing Bedok",
+
+    // ===== Japan (40+ Cities) =====
+    "web development Tokyo",
+    "SEO Yokohama",
+    "digital marketing Osaka",
+    "UI/UX Nagoya",
+    "graphic design Sapporo",
+    "video editing Kobe",
+    "3D animation Kyoto",
+    "e-commerce Fukuoka",
+    "app development Kawasaki",
+    "WordPress Saitama",
+    "local SEO Hiroshima",
+    "social media Sendai",
+    "branding Chiba",
+    "motion graphics Kitakyushu",
+    "web design Sakai",
+    "Google Ads Niigata",
+    "Shopify Hamamatsu",
+    "YouTube editing Kumamoto",
+    "logo design Sagamihara",
+    "email marketing Okayama",
+    "React.js Shizuoka",
+    "Adobe XD Kagoshima",
+    "Laravel Funabashi",
+    "content marketing Hachioji",
+    "product photography Matsuyama",
+    "AR/VR Higashiosaka",
+    "technical SEO Utsunomiya",
+    "B2B marketing Matsudo",
+    "B2C Nishinomiya",
+    "Wix developers Kanazawa",
+    "Squarespace Ichinomiya",
+    "animation Oita",
+    "corporate video Fukuyama",
+    "explainer videos Amagasaki",
+    "architectural visualization Kurashiki",
+    "product modeling Takamatsu",
+    "Google My Business Toyota",
+    "Facebook Ads Nagasaki",
+    "Instagram Gifu",
+    "TikTok Hirakata",
+    "LinkedIn Fujisawa",
+
+    // ===== Saudi Arabia (40+ Cities) =====
+    "web development Riyadh",
+    "SEO Jeddah",
+    "digital marketing Mecca",
+    "UI/UX Medina",
+    "graphic design Dammam",
+    "video editing Taif",
+    "3D animation Tabuk",
+    "e-commerce Khamis Mushait",
+    "app development Buraydah",
+    "WordPress Jubail",
+    "local SEO Al Khobar",
+    "social media Najran",
+    "branding Hail",
+    "motion graphics Baha",
+    "web design Arar",
+    "Google Ads Sakaka",
+    "Shopify Jizan",
+    "YouTube editing Al Qunfudhah",
+    "logo design Al Lith",
+    "email marketing Al Majma'ah",
+    "React.js Shaqra",
+    "Adobe XD Dhurma",
+    "Laravel Al-Kharj",
+    "content marketing Layla",
+    "product photography Al-Quway'iyah",
+    "AR/VR Wadi ad-Dawasir",
+    "technical SEO Al-Sulayyil",
+    "B2B marketing Al Bukayriyah",
+    "B2C Al Mithnab",
+    "Wix developers Al Badayea",
+    "Squarespace Baljurashi",
+    "animation Al Mandaq",
+    "corporate video Al-Hareeq",
+    "explainer videos Al Namas",
+    "architectural visualization Turaif",
+    "product modeling Rafha",
+    "Google My Business Al Ula",
+    "Facebook Ads Al Wajh",
+    "Instagram Duba",
+    "TikTok Haql",
+    "LinkedIn Al Jafer",
+
+    // ===== Service Categories =====
+    "premium web development",
+    "award-winning UI/UX",
+    "results-driven SEO",
+    "strategic digital marketing",
+    "creative graphic design",
+    "professional video production",
+    "cutting-edge 3D services",
+    "responsive web design",
+    "mobile app development",
+    "e-commerce solutions",
+    "WordPress customization",
+    "Shopify experts",
+    "local SEO optimization",
+    "international SEO",
+    "content marketing strategy",
+    "social media management",
+    "brand identity design",
+    "logo creation",
+    "corporate branding",
+    "packaging design",
+    "print media design",
+    "motion graphics",
+    "2D/3D animation",
+    "explainer videos",
+    "product visualization",
+    "architectural rendering",
+    "virtual reality development",
+    "augmented reality apps",
+    "Google Ads campaigns",
+    "Facebook advertising",
+    "Instagram marketing",
+    "LinkedIn B2B strategy",
+    "TikTok viral content",
+    "YouTube channel growth",
+    "email automation",
+    "landing page design",
+    "conversion rate optimization",
+    "technical SEO audit",
+    "website speed optimization",
+    "accessibility compliance",
+  ],
+
+  openGraph: {
+    title: "Nexo Mark | Digital Agency Serving 400+ Cities Worldwide",
+    description:
+      "Web development, UI/UX, SEO & marketing experts in New York, London, Dubai, Tokyo, Riyadh & 400+ global cities. 24/7 support.",
+    url: "https://www.nexomark.agency",
+    images: [
+      {
+        url: "https://www.nexomark.agency/social-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Nexo Mark serving 10+ countries with digital solutions",
+      },
+    ],
+    siteName: "Nexo Mark",
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Nexo Mark | Global Experts in Web, SEO, Design & Marketing",
+    description:
+      "Top rated digital agency delivering web development, UI/UX, SEO, digital marketing, graphic design, video editing and 3D services. Powering growth for brands in 10+ countries.",
+
+    images: ["https://www.nexomark.agency/social-image.png"],
+  },
+
+  alternates: {
+    canonical: "https://www.nexomark.agency",
+    languages: {
+      "en-US": "/en-US",
+      "ar-SA": "/ar-SA",
+      "ja-JP": "/ja-JP",
+      "de-DE": "/de-DE",
+      "fr-FR": "/fr-FR",
+    },
+  },
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <div>
+      a    </div>
   );
 }
