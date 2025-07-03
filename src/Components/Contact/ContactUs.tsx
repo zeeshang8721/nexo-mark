@@ -15,11 +15,17 @@ import {
   FiLink,
   FiCode,
   FiBox,
+  FiAlertTriangle,
+  FiX,
 } from "react-icons/fi";
 
 export default function ContactUs() {
   const [activeTab, setActiveTab] = useState<"client" | "agency">("client");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -55,12 +61,19 @@ export default function ContactUs() {
     setFormData({ ...formData, website: `https://${value}` });
   };
 
+  const showError = (message: string) => {
+    setError({ show: true, message });
+    setTimeout(() => {
+      setError({ show: false, message: "" });
+    }, 5000);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitted(true);
 
     try {
-      const response = await fetch("../../app/api/contact", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -107,8 +120,11 @@ export default function ContactUs() {
     } catch (error) {
       console.error("Error submitting form:", error);
       setIsSubmitted(false);
-      // Optionally show error to user
-      alert("Submission failed. Please try again.");
+      showError(
+        error instanceof Error
+          ? error.message
+          : "Submission failed. Please try again."
+      );
     }
   };
 
@@ -187,7 +203,48 @@ export default function ContactUs() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white py-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-40 bg-gradient-to-br from-gray-900 to-black text-white py-20 px-4 sm:px-6 lg:px-8">
+      <AnimatePresence>
+        {error.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <div className="bg-red-900/80 backdrop-blur-md border border-red-700 rounded-xl shadow-2xl overflow-hidden w-full max-w-md">
+              <div className="p-4 flex items-start">
+                <div className="flex-shrink-0 pt-0.5">
+                  <FiAlertTriangle className="h-6 w-6 text-red-300" />
+                </div>
+                <div className="ml-3 flex-1">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-sm font-medium text-red-100">
+                      Submission Error
+                    </h3>
+                    <button
+                      onClick={() => setError({ show: false, message: "" })}
+                      className="text-red-300 hover:text-white focus:outline-none"
+                    >
+                      <FiX className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="mt-1 text-sm text-red-200">
+                    {error.message}
+                  </div>
+                </div>
+              </div>
+              <motion.div
+                initial={{ width: "100%" }}
+                animate={{ width: 0 }}
+                transition={{ duration: 5, ease: "linear" }}
+                className="h-1 bg-red-700"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
@@ -231,11 +288,10 @@ export default function ContactUs() {
               <button
                 key={type}
                 onClick={() => setActiveTab(type as "client" | "agency")}
-                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${
-                  activeTab === type
-                    ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
-                    : "text-neutral-300 hover:text-white"
-                }`}
+                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${activeTab === type
+                  ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
+                  : "text-neutral-300 hover:text-white"
+                  }`}
               >
                 {type === "client" ? (
                   <>

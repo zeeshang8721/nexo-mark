@@ -59,7 +59,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.5 }}
-            className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 max-w-[240px] md:max-w-[490px]"
+            className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 max-w-[250px] md:max-w-[490px]"
           >
             {/* Primary Button - Responsive sizing */}
             {/* <motion.button

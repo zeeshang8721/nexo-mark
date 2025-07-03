@@ -1,6 +1,7 @@
 import React from "react";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { FiInstagram, FiLinkedin, FiFacebook } from "react-icons/fi";
 
 const Footer = () => {
   return (
@@ -8,8 +9,8 @@ const Footer = () => {
       {/* TOP SECTION: Brand + Newsletter */}
       <div className="flex md:flex-nowrap flex-wrap justify-between items-center border-b border-b-[#383A3E] pt-20 pb-10">
         <div className="">
-          <p className="text-[#FDFDFE] text-[100px] leading-0 sm:pt-10">Nexo</p>
-          <p className="text-[#C3C5C6] text-[150px] pl-10">Mark</p>
+          <p className="text-[#FDFDFE] text-[80px] sm:text-[100px] leading-0 sm:pt-10">Nexo</p>
+          <p className="text-[#C3C5C6] text-[130px] sm:text-[150px] pl-10">Mark</p>
         </div>
         <div className="mt-10">
           <p className="text-[#C3C5C6] text-lg mb-4">
@@ -43,23 +44,25 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* MID SECTION: Quick Links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-12 text-[#C3C5C6] text-sm">
+      {/* MID SECTION: Quick Links + Socials */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-12 text-[#C3C5C6] text-sm">
         <div>
           <p className="text-white font-medium mb-3">Find Your Way</p>
           <ul className="space-y-2">
-            {" "}
             <li>
-              {" "}
-              <Link href={"/about-us"}>About Us</Link>
+              <Link href={"/about-us"} className="hover:text-white transition">
+                About Us
+              </Link>
             </li>
             <li>
-              {" "}
-              <Link href={"/partners-program"}>Partners Program </Link>
+              <Link href={"/partners-program"} className="hover:text-white transition">
+                Partners Program
+              </Link>
             </li>
             <li>
-              {" "}
-              <Link href={"/contact-us"}>Contact Us </Link>
+              <Link href={"/contact-us"} className="hover:text-white transition">
+                Contact Us
+              </Link>
             </li>
           </ul>
         </div>
@@ -68,33 +71,43 @@ const Footer = () => {
           <p className="text-white font-medium mb-3">Our Services</p>
           <ul className="space-y-2">
             <li>
-              {" "}
-              <Link href={"/services/website-development"}>
-                {" "}
-                Website Development{" "}
+              <Link 
+                href={"/services/website-development"} 
+                className="hover:text-white transition"
+              >
+                Website Development
               </Link>
             </li>
             <li>
-              <Link href={"/services/ui-ux"}>UI/UX Designing</Link>
-            </li>
-            <li>
-              <Link href={"/services/digital-marketing"}>
-                Digital Marketing{" "}
+              <Link href={"/services/ui-ux"} className="hover:text-white transition">
+                UI/UX Designing
               </Link>
             </li>
             <li>
-              {" "}
-              <Link href={"/services/graphics-designing"}>
-                Graphic Designing{" "}
+              <Link 
+                href={"/services/digital-marketing"} 
+                className="hover:text-white transition"
+              >
+                Digital Marketing
               </Link>
             </li>
             <li>
-              {" "}
-              <Link href={"/services/video-editing"}>Video Editing</Link>
+              <Link 
+                href={"/services/graphics-designing"} 
+                className="hover:text-white transition"
+              >
+                Graphic Designing
+              </Link>
             </li>
             <li>
-              {" "}
-              <Link href={"/services/3d"}>3D Designing</Link>
+              <Link href={"/services/video-editing"} className="hover:text-white transition">
+                Video Editing
+              </Link>
+            </li>
+            <li>
+              <Link href={"/services/3d"} className="hover:text-white transition">
+                3D Designing
+              </Link>
             </li>
           </ul>
         </div>
@@ -102,14 +115,57 @@ const Footer = () => {
         <div>
           <p className="text-white font-medium mb-3">Our Offices</p>
           <ul className="space-y-2">
-            <li>
+            <li className="hover:text-white transition cursor-default">
               GGICO METRO STATION EXIT 2, THE ARCADE BUILDING OFFICE, NO 203, AL
               GARhoud Deira Dubai
             </li>
-            <li>9H Sunny Side Road, ML5 3DG, Glasgow</li>
-            <li>Setten Rd, Al Faisaliyyah, Jeddah</li>
-            <li>Mall Of Lyallpur - Office No Mz-94, D-Ground Faisalabad</li>
+            <li className="hover:text-white transition cursor-default">
+              9H Sunny Side Road, ML5 3DG, Glasgow
+            </li>
+            <li className="hover:text-white transition cursor-default">
+              Setten Rd, Al Faisaliyyah, Jeddah
+            </li>
+            <li className="hover:text-white transition cursor-default">
+              Mall Of Lyallpur - Office No Mz-94, D-Ground Faisalabad
+            </li>
           </ul>
+        </div>
+
+        {/* Social Media Section */}
+        <div>
+          <p className="text-white font-medium mb-3">Connect With Us</p>
+          <div className="flex gap-4 mt-4">
+            <a 
+              href="https://www.instagram.com/nexomark.agency/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-[#1E1E1E] hover:bg-[#2E2E2E] p-3 rounded-full transition-all duration-300"
+              aria-label="Instagram"
+            >
+              <FiInstagram className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://www.linkedin.com/company/107739849/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-[#1E1E1E] hover:bg-[#2E2E2E] p-3 rounded-full transition-all duration-300"
+              aria-label="LinkedIn"
+            >
+              <FiLinkedin className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://facebook.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-[#1E1E1E] hover:bg-[#2E2E2E] p-3 rounded-full transition-all duration-300"
+              aria-label="Facebook"
+            >
+              <FiFacebook className="h-5 w-5" />
+            </a>
+          </div>
+          <p className="mt-6 text-[#C3C5C6]">
+            Follow us for updates, tips, and more.
+          </p>
         </div>
       </div>
 
