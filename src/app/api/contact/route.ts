@@ -17,12 +17,24 @@ interface ContactData {
 }
 
 export async function POST(req: Request) {
+  // Set CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new NextResponse(null, { headers });
+  }
+
   try {
     const contentType = req.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-      return NextResponse.json(
-        { success: false, message: "Invalid content type" },
-        { status: 400 }
+      return new NextResponse(
+        JSON.stringify({ success: false, message: "Invalid content type" }),
+        { status: 400, headers }
       );
     }
 
@@ -43,12 +55,12 @@ export async function POST(req: Request) {
 
     // Validation
     if (!name || !email || !message || !service) {
-      return NextResponse.json(
-        {
+      return new NextResponse(
+        JSON.stringify({
           success: false,
           message: "Name, email, service and message are required",
-        },
-        { status: 400 }
+        }),
+        { status: 400, headers }
       );
     }
 
@@ -430,6 +442,15 @@ export async function POST(req: Request) {
 
     await transporter.sendMail({
       from: `"Nexomark" <${adminEmail}>`,
+      to: adminEmail,
+      subject: isAgency
+        ? "New Agency Partnership Request"
+        : "New Client Project Inquiry",
+      html: adminEmailContent,
+    });
+
+    await transporter.sendMail({
+      from: `"Nexomark" <${adminEmail}>`,
       to: email,
       subject: isAgency
         ? "Thank You for Your Partnership Interest"
@@ -437,16 +458,16 @@ export async function POST(req: Request) {
       html: userEmailContent,
     });
 
-    return NextResponse.json(
-      { success: true, message: "Form submitted successfully!" },
-      { status: 200 }
+    return new NextResponse(
+      JSON.stringify({ success: true, message: "Form submitted successfully!" }),
+      { status: 200, headers }
     );
   } catch (error: unknown) {
     console.error("Email Error:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-    return NextResponse.json(
-      { success: false, message: "Error sending email", error: errorMessage },
-      { status: 500 }
+    return new NextResponse(
+      JSON.stringify({ success: false, message: "Error sending email", error: errorMessage }),
+      { status: 500, headers }
     );
   }
 }

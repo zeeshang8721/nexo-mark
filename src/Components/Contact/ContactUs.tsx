@@ -67,13 +67,12 @@ export default function ContactUs() {
       setError({ show: false, message: "" });
     }, 5000);
   };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitted(true);
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${window.location.origin}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +92,8 @@ export default function ContactUs() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
@@ -127,6 +127,7 @@ export default function ContactUs() {
       );
     }
   };
+
 
   const projectTypes = [
     {
