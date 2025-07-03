@@ -105,9 +105,19 @@ export default function ContactUs() {
         body: JSON.stringify(payload),
       });
 
+      if (!response.ok) {
+        console.error("Server error", response.status);
+        setError({
+          show: true,
+          message: `Server error: ${response.status}. Please try again later.`,
+        });
+        setIsSubmitted(false);
+        return;
+      }
+
       const result = await response.json();
 
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         throw new Error(result.message || "Something went wrong. Please try again.");
       }
 

@@ -1,6 +1,20 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+export async function OPTIONS() {
+  return NextResponse.json(
+    { success: true, message: "CORS preflight successful" },
+    {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    }
+  );
+}
+
 interface ContactData {
   name: string;
   email: string;
