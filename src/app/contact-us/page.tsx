@@ -20,56 +20,53 @@ export default function ContactForm() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
-    setSuccess(false);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setError('');
+  setSuccess(false);
 
-    let response: Response | null = null; // Declare response variable at the start
+  let response: Response | null = null;
 
-    try {
-      response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+  try {
+    response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to send message');
-      }
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to send message');
+    }
 
-      setSuccess(true);
-      setFormData({ name: '', email: '', message: '' });
-      // Optionally redirect after success
-      // router.push('/thank-you');
-    } catch (err) {
-      let errorMessage = 'Failed to send message';
+    setSuccess(true);
+    setFormData({ name: '', email: '', message: '' });
+  } catch (err) {
+    let errorMessage = 'Failed to send message';
 
-      if (err instanceof Error) {
-        errorMessage = err.message;
+    if (err instanceof Error) {
+      errorMessage = err.message;
 
-        // Try to get additional error details if response exists
-        if (response) {
-          try {
-            const errorData = await response.json();
-            if (errorData?.details) {
-              errorMessage += ` (${JSON.stringify(errorData.details)})`;
-            }
-          } catch (e) {
-            // Ignore JSON parsing errors
+      if (response) {
+        try {
+          const errorData = await response.json();
+          if (errorData?.details) {
+            errorMessage += ` (${JSON.stringify(errorData.details)})`;
           }
+        } catch {
+          // Ignore JSON parsing errors
         }
       }
-
-      setError(errorMessage);
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+
+    setError(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="max-w-md mx-auto pt-40 pb-26 px-6 bg-white rounded-lg shadow-md">
