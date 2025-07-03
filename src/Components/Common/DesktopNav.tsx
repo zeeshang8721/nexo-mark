@@ -24,7 +24,7 @@ interface NavItemChild {
 
 interface NavItem {
     label: string;
-    href: string;
+    href?: string;
     isMegaMenu?: boolean;
     children?: NavItemChild[];
 }
@@ -79,11 +79,12 @@ const DesktopNav = () => {
         };
     }, []);
 
+
+
     const navItems = useMemo<NavItem[]>(() => [
         { label: "Home", href: "/" },
         {
             label: "Services",
-            href: "/services",
             isMegaMenu: true,
             children: [
                 {
@@ -143,7 +144,7 @@ const DesktopNav = () => {
             ],
         },
         { label: "Partners Program", href: "/partners-program" },
-        { label: "Contact", href: "/contact" },
+        { label: "Contact", href: "/contact-us" },
     ], []);
 
     const LazyMegaMenu: React.FC<LazyMegaMenuProps> = ({ item, onClose }) => {
@@ -269,19 +270,33 @@ const DesktopNav = () => {
                                     } transition-colors`}
                                 onClick={() => setSelectedItem(item.label.toLowerCase())}
                             >
-                                <Link
-                                    href={item.href}
-                                    className="focus:outline-none"
-                                    onClick={(e) => {
-                                        if (item.children) {
-                                            e.preventDefault();
-                                        } else {
-                                            handleMouseEnter(null);
-                                        }
-                                    }}
-                                >
-                                    {item.label}
-                                </Link>
+                                {item.href ? (
+                                    <Link
+                                        href={item.href}
+                                        className="focus:outline-none"
+                                        onClick={(e) => {
+                                            if (item.children) {
+                                                e.preventDefault();
+                                            } else {
+                                                handleMouseEnter(null);
+                                            }
+                                        }}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                ) : (
+                                    <span
+                                        className="focus:outline-none"
+                                        onClick={() => {
+                                            if (!item.children) {
+                                                handleMouseEnter(null);
+                                            }
+                                        }}
+                                    >
+                                        {item.label}
+                                    </span>
+                                )}
+
                                 {item.children && (
                                     <IoIosArrowDown
                                         className={`${hoveredItem === item.label ? "rotate-180" : ""} transition-transform`}
@@ -304,8 +319,8 @@ const DesktopNav = () => {
 
                 {/* Desktop CTA Button */}
                 <div className="hidden lg:block">
-                    <Link href="/contact" className="focus:outline-none">
-                        <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 py-3 px-6 shadow-lg hover:shadow-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <Link href="/contact-us" className="focus:outline-none">
+                        <button className=" cursor-pointer bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 py-3 px-6 shadow-lg hover:shadow-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400">
                             Get Started
                         </button>
                     </Link>
@@ -332,22 +347,33 @@ const DesktopNav = () => {
                                                     }
                                                 }}
                                             >
-                                                <Link
-                                                    href={item.href}
-                                                    className={`${selectedItem === item.label.toLowerCase()
-                                                        ? "text-blue-400"
-                                                        : "text-white"
-                                                        } focus:outline-none`}
-                                                    onClick={(e) => {
-                                                        if (item.children) {
-                                                            e.preventDefault();
-                                                        } else {
-                                                            handleMouseEnter(null);
-                                                        }
-                                                    }}
-                                                >
-                                                    {item.label}
-                                                </Link>
+                                                {item.href ? (
+                                                    <Link
+                                                        href={item.href}
+                                                        className="focus:outline-none"
+                                                        onClick={(e) => {
+                                                            if (item.children) {
+                                                                e.preventDefault();
+                                                            } else {
+                                                                handleMouseEnter(null);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {item.label}
+                                                    </Link>
+                                                ) : (
+                                                    <span
+                                                        className="focus:outline-none"
+                                                        onClick={() => {
+                                                            if (!item.children) {
+                                                                handleMouseEnter(null);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {item.label}
+                                                    </span>
+                                                )}
+
                                                 {item.children && (
                                                     <IoIosArrowForward
                                                         className={`transition-transform ${expandedMobileItem === item.label ? "rotate-90" : ""
