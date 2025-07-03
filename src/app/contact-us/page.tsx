@@ -26,8 +26,10 @@ export default function ContactForm() {
     setError('');
     setSuccess(false);
 
+    let response: Response | null = null; // Declare response variable at the start
+
     try {
-      const response = await fetch('/api/send-email', {
+      response = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +38,8 @@ export default function ContactForm() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to send message');
       }
 
       setSuccess(true);
@@ -44,7 +47,25 @@ export default function ContactForm() {
       // Optionally redirect after success
       // router.push('/thank-you');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      let errorMessage = 'Failed to send message';
+
+      if (err instanceof Error) {
+        errorMessage = err.message;
+
+        // Try to get additional error details if response exists
+        if (response) {
+          try {
+            const errorData = await response.json();
+            if (errorData?.details) {
+              errorMessage += ` (${JSON.stringify(errorData.details)})`;
+            }
+          } catch (e) {
+            // Ignore JSON parsing errors
+          }
+        }
+      }
+
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -53,10 +74,10 @@ export default function ContactForm() {
   return (
     <div className="max-w-md mx-auto pt-40 pb-26 px-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Contact Us</h1>
-      
+
       {success && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
-         {` Thank you for your message! We'll get back to you soon.`}
+          {` Thank you for your message! We'll get back to you soon.`}
         </div>
       )}
       {error && (
@@ -64,7 +85,7 @@ export default function ContactForm() {
           {error}
         </div>
       )}
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -80,7 +101,7 @@ export default function ContactForm() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        
+
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
@@ -95,7 +116,7 @@ export default function ContactForm() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        
+
         <div>
           <label htmlFor="message" className="block text-sm font-medium text-gray-700">
             Message
@@ -110,7 +131,7 @@ export default function ContactForm() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        
+
         <div>
           <button
             type="submit"
