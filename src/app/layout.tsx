@@ -2,6 +2,7 @@
 
 import type { Metadata } from "next";
 import "./globals.css";
+import ClientWrapper from "@/Components/Common/ClientWrapper";
 
 export const metadata: Metadata = {
   icons: {
@@ -23,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        {children}
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );

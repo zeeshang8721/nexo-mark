@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import TextPressure from "./Textpressure";
+import TextPressure from "../Home/Textpressure";
 import { motion } from "framer-motion";
 
 const Cta = () => {

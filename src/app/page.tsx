@@ -1,3 +1,4 @@
+import Index from "@/Components/Home/Index";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -479,6 +480,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div>
-      a    </div>
+      <Index />
+    </div>
   );
 }
