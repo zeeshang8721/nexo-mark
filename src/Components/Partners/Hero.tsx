@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Handshake, Briefcase, Globe } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
 
 const PartnerHero = () => {
   return (
