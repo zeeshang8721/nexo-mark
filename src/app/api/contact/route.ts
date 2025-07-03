@@ -17,7 +17,6 @@ interface ContactData {
 }
 
 export async function POST(req: Request) {
-  // Set CORS headers
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
@@ -25,13 +24,11 @@ export async function POST(req: Request) {
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
-  // Handle OPTIONS request for CORS preflight
   if (req.method === 'OPTIONS') {
     return new NextResponse(null, { headers });
   }
 
   try {
-    // Verify content type
     const contentType = req.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       return new NextResponse(
@@ -40,17 +37,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Parse request body
-    let data: ContactData;
-    try {
-      data = await req.json();
-    } catch {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "Invalid JSON payload" }),
-        { status: 400, headers }
-      );
-    }
-
+    const data: ContactData = await req.json();
     const {
       name,
       email,
@@ -76,28 +63,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create transporter with error handling
-    let transporter;
-    try {
-      transporter = nodemailer.createTransport({
-        host: "smtp.zoho.com",
-        port: 465,
-        secure: true,
-        auth: {
-          user: adminEmail,
-          pass: adminPassword,
-        },
-      });
-    } catch (transporterError) {
-      console.error("Transporter creation failed:", transporterError);
-      return new NextResponse(
-        JSON.stringify({ 
-          success: false, 
-          message: "Email service configuration error" 
-        }),
-        { status: 500, headers }
-      );
-    }
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      host: "smtp.zoho.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: adminEmail,
+        pass: adminPassword,
+      },
+    });
+
 
     // ADMIN NOTIFICATION EMAIL TEMPLATE
     const adminEmailContent = isAgency
@@ -451,40 +427,24 @@ export async function POST(req: Request) {
     `;
 
     // Send admin notification
-    try {
-      await transporter.sendMail({
-        from: `"Nexomark" <${adminEmail}>`,
-        to: adminEmail,
-        subject: isAgency
-          ? "New Agency Partnership Request"
-          : "New Client Project Inquiry",
-        html: adminEmailContent,
-      });
-    } catch (adminEmailError) {
-      console.error("Failed to send admin email:", adminEmailError);
-      // Continue even if admin email fails
-    }
+   await transporter.sendMail({
+      from: `"Nexomark" <${adminEmail}>`,
+      to: adminEmail,
+      subject: isAgency
+        ? "New Agency Partnership Request"
+        : "New Client Project Inquiry",
+      html: adminEmailContent,
+    });
 
     // Send user confirmation
-    try {
-      await transporter.sendMail({
-        from: `"Nexomark" <${adminEmail}>`,
-        to: email,
-        subject: isAgency
-          ? "Thank You for Your Partnership Interest"
-          : "Thank You for Your Project Inquiry",
-        html: userEmailContent,
-      });
-    } catch (userEmailError) {
-      console.error("Failed to send user email:", userEmailError);
-      return new NextResponse(
-        JSON.stringify({
-          success: true,
-          message: "Form submitted but confirmation email failed",
-        }),
-        { status: 200, headers }
-      );
-    }
+    await transporter.sendMail({
+      from: `"Nexomark" <${adminEmail}>`,
+      to: email,
+      subject: isAgency
+        ? "Thank You for Your Partnership Interest"
+        : "Thank You for Your Project Inquiry",
+      html: userEmailContent,
+    });
 
     return new NextResponse(
       JSON.stringify({ success: true, message: "Form submitted successfully!" }),

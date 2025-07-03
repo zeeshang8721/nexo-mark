@@ -32,10 +32,8 @@ export default function ContactUs() {
     phone: "",
     service: "web-dev",
     budget: "1k-5k",
-    deliveryTime: "",
     message: "",
     company: "",
-    partnershipType: "development",
     website: "",
   });
 
@@ -55,13 +53,9 @@ export default function ContactUs() {
 
   const handleWebsiteChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
-    // Remove any existing https:// to avoid duplicates
     value = value.replace(/^https?:\/\//, "");
-    // Add https:// prefix
-    setFormData({ ...formData, website: `https://${value}` });
+    setFormData({ ...formData, website: value ? `https://${value}` : "" });
   };
-
-
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,7 +63,23 @@ export default function ContactUs() {
     setError({ show: false, message: "" });
 
     try {
-      const response = await fetch('/app/api/contact/route.ts', {
+      // Map service values to more descriptive names
+      const serviceMap: Record<string, string> = {
+        "web-dev": "Web Development",
+        "ui-ux": "UI/UX Design",
+        "digital-marketing": "Digital Marketing",
+        "seo": "SEO Optimization",
+        "link-building": "Link Building",
+        "graphics": "Graphics Design",
+        "video-editing": "Video Editing",
+        "3d-modeling": "3D Modeling",
+        "development": "Development Partnership",
+        "design": "Design Collaboration",
+        "marketing": "Marketing Alliance",
+        "content": "Content Partnership"
+      };
+
+      const response = await fetch('/api/contact', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +89,7 @@ export default function ContactUs() {
           email: formData.email,
           phone: formData.phone,
           company: formData.company,
-          service: formData.service,
+          service: serviceMap[formData.service] || formData.service,
           budget: formData.budget,
           message: formData.message,
           website: formData.website,
@@ -87,29 +97,18 @@ export default function ContactUs() {
         }),
       });
 
-      // First check if we got any response at all
-      if (!response) {
-        throw new Error("No response from server - please check your connection");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Submission failed");
       }
 
-      // Then try to parse the JSON
-      let result;
-      try {
-        result = await response.json();
-      } catch (jsonError) {
-        console.error("JSON parsing error:", jsonError);
-        throw new Error("Server returned invalid response");
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message || "Submission failed");
       }
 
-      // Then check if the response indicates success
-      if (!response.ok || !result?.success) {
-        throw new Error(
-          result?.message ||
-          `Submission failed with status ${response.status}`
-        );
-      }
-
-      // Success case - reset form after delay
+      // Reset form after successful submission
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
@@ -118,10 +117,8 @@ export default function ContactUs() {
           phone: "",
           service: "web-dev",
           budget: "1k-5k",
-          deliveryTime: "",
           message: "",
           company: "",
-          partnershipType: "development",
           website: "",
         });
       }, 5000);
@@ -129,28 +126,16 @@ export default function ContactUs() {
     } catch (error) {
       console.error("Submission error:", error);
       setIsSubmitted(false);
-
-      // Determine the error message to show
-      let errorMessage = "Submission failed. Please try again.";
-      if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
-        errorMessage = "Network error - please check your connection";
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      // Show error to user
       setError({
         show: true,
-        message: errorMessage
+        message: error instanceof Error ? error.message : "Submission failed. Please try again."
       });
 
-      // Auto-hide error after 5 seconds
       setTimeout(() => {
         setError({ show: false, message: "" });
       }, 5000);
     }
   };
-
 
   const projectTypes = [
     {
@@ -312,10 +297,11 @@ export default function ContactUs() {
               <button
                 key={type}
                 onClick={() => setActiveTab(type as "client" | "agency")}
-                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${activeTab === type
-                  ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
-                  : "text-neutral-300 hover:text-white"
-                  }`}
+                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${
+                  activeTab === type
+                    ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
+                    : "text-neutral-300 hover:text-white"
+                }`}
               >
                 {type === "client" ? (
                   <>
@@ -521,7 +507,7 @@ export default function ContactUs() {
                         </div>
                       </div>
 
-                      <div>
+                      <div className=" col-span-2">
                         <label
                           htmlFor="budget"
                           className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
@@ -535,7 +521,7 @@ export default function ContactUs() {
                             value={formData.budget}
                             onChange={handleChange}
                             required
-                            className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 appearance-none"
+                            className="w-full bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block p-3 appearance-none"
                           >
                             {budgetOptions.map((option) => (
                               <option key={option.value} value={option.value}>
@@ -544,25 +530,6 @@ export default function ContactUs() {
                             ))}
                           </select>
                         </div>
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="deliveryTime"
-                          className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
-                        >
-                          Expected Delivery Time
-                        </label>
-                        <input
-                          type="text"
-                          id="deliveryTime"
-                          name="deliveryTime"
-                          value={formData.deliveryTime}
-                          onChange={handleChange}
-                          required
-                          className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition-all"
-                          placeholder="e.g. 2-3 days, 1 week, etc."
-                        />
                       </div>
                     </>
                   ) : (
@@ -618,12 +585,10 @@ export default function ContactUs() {
                             <div key={type.value} className="flex items-center">
                               <input
                                 id={`partner-${type.value}`}
-                                name="partnershipType"
+                                name="service"
                                 type="radio"
                                 value={type.value}
-                                checked={
-                                  formData.partnershipType === type.value
-                                }
+                                checked={formData.service === type.value}
                                 onChange={handleChange}
                                 className="hidden peer"
                               />
