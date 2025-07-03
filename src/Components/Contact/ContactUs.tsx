@@ -52,7 +52,7 @@ export default function ContactUs() {
   };
 
   const handleWebsiteChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.trim().replace(/^https?:\/\//, "");
+    const value = e.target.value.trim().replace(/^https?:\/\//, "");
     setFormData((prev) => ({
       ...prev,
       website: value ? `https://${value}` : "",
