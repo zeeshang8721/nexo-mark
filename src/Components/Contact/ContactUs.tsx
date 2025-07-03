@@ -99,7 +99,7 @@ export default function ContactUs() {
         subject: activeTab === "client" ? "Project Inquiry" : "Partnership Request",
       };
 
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/contact/submit-form", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
