@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-const adminEmail = "business@nexomark.agency";
-const adminPassword = "GGH1 AA8f camw"; // SMTP password
-
 interface ContactData {
   name: string;
   email: string;
@@ -17,27 +14,17 @@ interface ContactData {
 }
 
 export async function POST(req: Request) {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
-  if (req.method === 'OPTIONS') {
-    return new NextResponse(null, { headers });
-  }
-
   try {
     const contentType = req.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-      return new NextResponse(
-        JSON.stringify({ success: false, message: "Invalid content type" }),
-        { status: 400, headers }
+      return NextResponse.json(
+        { success: false, message: "Invalid content type" },
+        { status: 400 }
       );
     }
 
     const data: ContactData = await req.json();
+
     const {
       name,
       email,
@@ -49,21 +36,23 @@ export async function POST(req: Request) {
       website,
       subject,
     } = data;
+
     const isAgency = subject === "Partnership Request";
     const currentDate = new Date().toLocaleString();
 
-    // Validation
     if (!name || !email || !message || !service) {
-      return new NextResponse(
-        JSON.stringify({
+      return NextResponse.json(
+        {
           success: false,
-          message: "Name, email, service and message are required",
-        }),
-        { status: 400, headers }
+          message: "Name, email, service, and message are required",
+        },
+        { status: 400 }
       );
     }
 
-    // Create transporter
+    const adminEmail = process.env.ADMIN_EMAIL!;
+    const adminPassword = process.env.ADMIN_PASSWORD!;
+
     const transporter = nodemailer.createTransport({
       host: "smtp.zoho.com",
       port: 465,
@@ -427,7 +416,7 @@ export async function POST(req: Request) {
     `;
 
     // Send admin notification
-   await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Nexomark" <${adminEmail}>`,
       to: adminEmail,
       subject: isAgency
@@ -437,7 +426,7 @@ export async function POST(req: Request) {
     });
 
     // Send user confirmation
-    await transporter.sendMail({
+       await transporter.sendMail({
       from: `"Nexomark" <${adminEmail}>`,
       to: email,
       subject: isAgency
@@ -446,19 +435,16 @@ export async function POST(req: Request) {
       html: userEmailContent,
     });
 
-    return new NextResponse(
-      JSON.stringify({ success: true, message: "Form submitted successfully!" }),
-      { status: 200, headers }
+   return NextResponse.json(
+      { success: true, message: "Form submitted successfully!" },
+      { status: 200 }
     );
 
   } catch (error) {
-    console.error("Error:", error);
-    return new NextResponse(
-      JSON.stringify({
-        success: false,
-        message: "Internal server error"
-      }),
-      { status: 500, headers }
+    console.error("Error sending email:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
     );
   }
 }

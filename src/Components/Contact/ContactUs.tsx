@@ -52,9 +52,11 @@ export default function ContactUs() {
   };
 
   const handleWebsiteChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-    value = value.replace(/^https?:\/\//, "");
-    setFormData({ ...formData, website: value ? `https://${value}` : "" });
+    let value = e.target.value.trim().replace(/^https?:\/\//, "");
+    setFormData((prev) => ({
+      ...prev,
+      website: value ? `https://${value}` : "",
+    }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -62,8 +64,20 @@ export default function ContactUs() {
     setIsSubmitted(true);
     setError({ show: false, message: "" });
 
+    // Validate required fields
+    const requiredFields = ["name", "email", "message"];
+    for (const field of requiredFields) {
+      if (!formData[field as keyof typeof formData]) {
+        setError({
+          show: true,
+          message: `Please fill in the ${field} field.`,
+        });
+        setIsSubmitted(false);
+        return;
+      }
+    }
+
     try {
-      // Map service values to more descriptive names
       const serviceMap: Record<string, string> = {
         "web-dev": "Web Development",
         "ui-ux": "UI/UX Design",
@@ -76,39 +90,28 @@ export default function ContactUs() {
         "development": "Development Partnership",
         "design": "Design Collaboration",
         "marketing": "Marketing Alliance",
-        "content": "Content Partnership"
+        "content": "Content Partnership",
       };
 
-      const response = await fetch('/api/contact', {
+      const payload = {
+        ...formData,
+        service: serviceMap[formData.service] || formData.service,
+        subject: activeTab === "client" ? "Project Inquiry" : "Partnership Request",
+      };
+
+      const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          service: serviceMap[formData.service] || formData.service,
-          budget: formData.budget,
-          message: formData.message,
-          website: formData.website,
-          subject: activeTab === "client" ? "Project Inquiry" : "Partnership Request",
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Submission failed");
-      }
-
       const result = await response.json();
-      
-      if (!result.success) {
-        throw new Error(result.message || "Submission failed");
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Something went wrong. Please try again.");
       }
 
-      // Reset form after successful submission
+      // Reset form
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
@@ -122,14 +125,13 @@ export default function ContactUs() {
           website: "",
         });
       }, 5000);
-
-    } catch (error) {
-      console.error("Submission error:", error);
-      setIsSubmitted(false);
+    } catch (err) {
+      console.error(err);
       setError({
         show: true,
-        message: error instanceof Error ? error.message : "Submission failed. Please try again."
+        message: err instanceof Error ? err.message : "Unexpected error occurred.",
       });
+      setIsSubmitted(false);
 
       setTimeout(() => {
         setError({ show: false, message: "" });
@@ -297,11 +299,10 @@ export default function ContactUs() {
               <button
                 key={type}
                 onClick={() => setActiveTab(type as "client" | "agency")}
-                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${
-                  activeTab === type
-                    ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
-                    : "text-neutral-300 hover:text-white"
-                }`}
+                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${activeTab === type
+                  ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
+                  : "text-neutral-300 hover:text-white"
+                  }`}
               >
                 {type === "client" ? (
                   <>
