@@ -67,9 +67,12 @@ export default function ContactUs() {
       setError({ show: false, message: "" });
     }, 5000);
   };
+
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitted(true);
+    setError({ show: false, message: "" });
 
     try {
       const response = await fetch(`${window.location.origin}/api/contact`, {
@@ -86,22 +89,33 @@ export default function ContactUs() {
           budget: formData.budget,
           message: formData.message,
           website: formData.website,
-          subject:
-            activeTab === "client" ? "Project Inquiry" : "Partnership Request",
+          subject: activeTab === "client" ? "Project Inquiry" : "Partnership Request",
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      // First check if we got any response at all
+      if (!response) {
+        throw new Error("No response from server - please check your connection");
       }
 
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.message || "Submission failed");
+      // Then try to parse the JSON
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        console.error("JSON parsing error:", jsonError);
+        throw new Error("Server returned invalid response");
       }
 
+      // Then check if the response indicates success
+      if (!response.ok || !result?.success) {
+        throw new Error(
+          result?.message ||
+          `Submission failed with status ${response.status}`
+        );
+      }
+
+      // Success case - reset form after delay
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
@@ -117,14 +131,29 @@ export default function ContactUs() {
           website: "",
         });
       }, 5000);
+
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Submission error:", error);
       setIsSubmitted(false);
-      showError(
-        error instanceof Error
-          ? error.message
-          : "Submission failed. Please try again."
-      );
+
+      // Determine the error message to show
+      let errorMessage = "Submission failed. Please try again.";
+      if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
+        errorMessage = "Network error - please check your connection";
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      // Show error to user
+      setError({
+        show: true,
+        message: errorMessage
+      });
+
+      // Auto-hide error after 5 seconds
+      setTimeout(() => {
+        setError({ show: false, message: "" });
+      }, 5000);
     }
   };
 
@@ -654,7 +683,7 @@ export default function ContactUs() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     type="submit"
-                    className="group relative flex justify-center items-center px-8 py-4 text-sm font-semibold tracking-wider text-white rounded-full overflow-hidden transition-all duration-500 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 w-full max-w-xs sm:max-w-[280px] shadow-lg hover:shadow-xl"
+                    className="group cursor-pointer relative flex justify-center items-center px-8 py-4 text-sm font-semibold tracking-wider text-white rounded-full overflow-hidden transition-all duration-500 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 w-full max-w-xs sm:max-w-[280px] shadow-lg hover:shadow-xl"
                   >
                     <span className="relative z-10 flex items-center">
                       {activeTab === "client"
