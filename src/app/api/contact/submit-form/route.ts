@@ -3,8 +3,20 @@ import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
 
+// Define your submission data type
+interface SubmissionData {
+  name?: string;
+  email?: string;
+  message?: string;
+  phone?: string;
+  subject?: string;
+  timestamp?: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
 // Emergency local storage if everything fails
-const storeSubmissionLocally = (data: any) => {
+const storeSubmissionLocally = (data: SubmissionData) => {
   try {
     const dir = path.join(process.cwd(), 'submissions');
     if (!fs.existsSync(dir)) {
@@ -96,7 +108,7 @@ export async function POST(request: Request) {
         { status: 200, headers: corsHeaders }
       );
     } catch (zohoError) {
-      console.log('Zoho failed, trying SendGrid...');
+      console.error('Zoho failed, trying SendGrid...', zohoError);
     }
 
     // 5. Try Backup Submission (SendGrid)
@@ -123,7 +135,7 @@ export async function POST(request: Request) {
         { status: 200, headers: corsHeaders }
       );
     } catch (sendGridError) {
-      console.log('SendGrid failed, storing locally...');
+      console.error('SendGrid failed, storing locally...', sendGridError);
     }
 
     // 6. Final Fallback - Local Storage
