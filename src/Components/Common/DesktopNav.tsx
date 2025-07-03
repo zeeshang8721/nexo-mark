@@ -314,8 +314,8 @@ const DesktopNav = () => {
                 {/* Mobile Navigation Drawer */}
                 <Drawer.Root open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <Drawer.Portal>
-                        <Drawer.Overlay className="fixed inset-0 bg-black/40 z-40" />
-                        <Drawer.Content className="fixed bottom-0 left-0 top-[100px] right-0 max-h-[90%] rounded-t-[10px] bg-black/95 backdrop-blur-lg z-50 border-t border-gray-800 flex flex-col">
+                        <Drawer.Overlay className="fixed inset-0  bg-black/40 z-40" />
+                        <Drawer.Content className="fixed bottom-0 left-0 top-[78px] right-0 max-h-[90%] rounded-t-[10px] bg-black/95 backdrop-blur-lg z-50 border-t border-gray-800 flex flex-col">
                             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-gray-600 mt-2 mb-4" />
                             <div className="container mx-auto px-6 pt-2 pb-10 overflow-y-auto">
                                 <div className="flex flex-col space-y-6 text-xl">
