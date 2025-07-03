@@ -14,6 +14,30 @@ import {
   RiTeamLine,
 } from "react-icons/ri";
 
+interface NavItemChild {
+  title: string;
+  icon: React.ReactNode;
+  href: string;
+  description: string;
+}
+
+interface NavItem {
+  label: string;
+  href: string;
+  isMegaMenu?: boolean;
+  children?: NavItemChild[];
+}
+
+interface LazyMegaMenuProps {
+  item: NavItem;
+  onClose: () => void;
+}
+
+interface RegularDropdownProps {
+  item: NavItem;
+  onClose: () => void;
+}
+
 const DesktopNav = () => {
   const [selectedItem, setSelectedItem] = useState<string>("home");
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -54,7 +78,7 @@ const DesktopNav = () => {
     };
   }, []);
 
-  const navItems = useMemo(() => [
+  const navItems = useMemo<NavItem[]>(() => [
     { label: "Home", href: "/" },
     {
       label: "Services",
@@ -121,73 +145,81 @@ const DesktopNav = () => {
     { label: "Contact", href: "/contact" },
   ], []);
 
-  const LazyMegaMenu = ({ item, onClose }: { item: any, onClose: () => void }) => (
-    <div className="fixed left-0 mt-2 w-screen bg-black/95 backdrop-blur-lg shadow-xl rounded-b-lg p-8 flex flex-col lg:flex-row gap-10 z-50 border-t border-gray-800">
-      <div className="w-full lg:w-2/3">
-        <h3 className="text-2xl font-bold mb-6 text-white">Our Services</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {item.children.map((child: any, i: number) => (
-            <Link
-              key={i}
-              href={child.href}
-              className="group p-4 rounded-lg hover:bg-gray-900/50 border border-gray-800 hover:border-blue-400/30 transition-all"
-              onClick={onClose}
-            >
-              <div className="flex items-start gap-4">
-                <div className="mt-1">{child.icon}</div>
-                <div>
-                  <h4 className="text-lg font-semibold text-white group-hover:text-blue-400">
-                    {child.title}
-                  </h4>
-                  <p className="text-gray-400 text-sm mt-1">{child.description}</p>
+  const LazyMegaMenu: React.FC<LazyMegaMenuProps> = ({ item, onClose }) => {
+    if (!item.children) return null;
+    
+    return (
+      <div className="fixed left-0 mt-2 w-screen bg-black/95 backdrop-blur-lg shadow-xl rounded-b-lg p-8 flex flex-col lg:flex-row gap-10 z-50 border-t border-gray-800">
+        <div className="w-full lg:w-2/3">
+          <h3 className="text-2xl font-bold mb-6 text-white">Our Services</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {item.children.map((child, i) => (
+              <Link
+                key={i}
+                href={child.href}
+                className="group p-4 rounded-lg hover:bg-gray-900/50 border border-gray-800 hover:border-blue-400/30 transition-all"
+                onClick={onClose}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="mt-1">{child.icon}</div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-white group-hover:text-blue-400">
+                      {child.title}
+                    </h4>
+                    <p className="text-gray-400 text-sm mt-1">{child.description}</p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div className="w-full lg:w-1/3 bg-gradient-to-br from-blue-900/20 to-black/50 p-6 rounded-lg border border-gray-800">
+          <h3 className="text-xl font-bold mb-4 text-white">Why Choose Us?</h3>
+          <ul className="space-y-4 text-gray-300">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400">✓</span>
+              <span>Industry-leading expertise</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400">✓</span>
+              <span>Custom solutions for your business</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400">✓</span>
+              <span>Transparent communication</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-400">✓</span>
+              <span>Proven track record of success</span>
+            </li>
+          </ul>
         </div>
       </div>
-      <div className="w-full lg:w-1/3 bg-gradient-to-br from-blue-900/20 to-black/50 p-6 rounded-lg border border-gray-800">
-        <h3 className="text-xl font-bold mb-4 text-white">Why Choose Us?</h3>
-        <ul className="space-y-4 text-gray-300">
-          <li className="flex items-start gap-3">
-            <span className="text-blue-400">✓</span>
-            <span>Industry-leading expertise</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-blue-400">✓</span>
-            <span>Custom solutions for your business</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-blue-400">✓</span>
-            <span>Transparent communication</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-blue-400">✓</span>
-            <span>Proven track record of success</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  );
+    );
+  };
 
-  const RegularDropdown = ({ item, onClose }: { item: any, onClose: () => void }) => (
-    <div className="absolute -left-14 mt-2 w-64 bg-black/95 backdrop-blur-lg rounded-lg shadow-lg p-4 z-50 border border-gray-800">
-      {item.children.map((child: any, i: number) => (
-        <Link
-          key={i}
-          href={child.href}
-          className="flex items-center gap-3 p-3 rounded-md hover:bg-gray-900/50 text-white hover:text-blue-400 transition-colors"
-          onClick={onClose}
-        >
-          {child.icon}
-          <div>
-            <h4 className="font-medium">{child.title}</h4>
-            <p className="text-xs text-gray-400">{child.description}</p>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
+  const RegularDropdown: React.FC<RegularDropdownProps> = ({ item, onClose }) => {
+    if (!item.children) return null;
+    
+    return (
+      <div className="absolute -left-14 mt-2 w-64 bg-black/95 backdrop-blur-lg rounded-lg shadow-lg p-4 z-50 border border-gray-800">
+        {item.children.map((child, i) => (
+          <Link
+            key={i}
+            href={child.href}
+            className="flex items-center gap-3 p-3 rounded-md hover:bg-gray-900/50 text-white hover:text-blue-400 transition-colors"
+            onClick={onClose}
+          >
+            {child.icon}
+            <div>
+              <h4 className="font-medium">{child.title}</h4>
+              <p className="text-xs text-gray-400">{child.description}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="fixed w-full bg-black/80 backdrop-blur-md z-[1000] border-b border-gray-800" ref={navbarRef}>
