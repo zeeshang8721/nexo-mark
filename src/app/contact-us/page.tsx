@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -12,7 +11,6 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -58,10 +56,9 @@ export default function ContactForm() {
       
       {success && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
-          Thank you for your message! We'll get back to you soon.
+         {` Thank you for your message! We'll get back to you soon.`}
         </div>
       )}
-      
       {error && (
         <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
           {error}
