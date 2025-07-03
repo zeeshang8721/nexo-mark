@@ -392,6 +392,7 @@ export default function ContactUs() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onSubmit={handleSubmit}
+                method="POST"
               >
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                   {/* Common Fields */}
