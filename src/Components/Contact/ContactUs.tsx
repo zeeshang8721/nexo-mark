@@ -93,9 +93,18 @@ export default function ContactUs() {
         "content": "Content Partnership",
       };
 
+      const budgetMap: Record<string, string> = {
+        "1k-5k": "$1,000 - $5,000",
+        "5k-10k": "$5,000 - $10,000",
+        "10k-20k": "$10,000 - $20,000",
+        "20k+": "$20,000+",
+        "custom": "Custom Budget",
+      };
+
       const payload = {
         ...formData,
         service: serviceMap[formData.service] || formData.service,
+        budget: formData.budget ? budgetMap[formData.budget] || formData.budget : undefined,
         subject: activeTab === "client" ? "Project Inquiry" : "Partnership Request",
       };
 
@@ -105,23 +114,13 @@ export default function ContactUs() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        console.error("Server error", response.status);
-        setError({
-          show: true,
-          message: `Server error: ${response.status}. Please try again later.`,
-        });
-        setIsSubmitted(false);
-        return;
-      }
-
       const result = await response.json();
 
-      if (!result.success) {
-        throw new Error(result.message || "Something went wrong. Please try again.");
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Form submission failed");
       }
 
-      // Reset form
+      // Reset form after successful submission
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
@@ -139,13 +138,9 @@ export default function ContactUs() {
       console.error(err);
       setError({
         show: true,
-        message: err instanceof Error ? err.message : "Unexpected error occurred.",
+        message: err instanceof Error ? err.message : "Unexpected error occurred",
       });
       setIsSubmitted(false);
-
-      setTimeout(() => {
-        setError({ show: false, message: "" });
-      }, 5000);
     }
   };
 
