@@ -61,12 +61,6 @@ export default function ContactUs() {
     setFormData({ ...formData, website: `https://${value}` });
   };
 
-  const showError = (message: string) => {
-    setError({ show: true, message });
-    setTimeout(() => {
-      setError({ show: false, message: "" });
-    }, 5000);
-  };
 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

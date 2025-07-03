@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     let data: ContactData;
     try {
       data = await req.json();
-    } catch (parseError) {
+    } catch {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Invalid JSON payload" }),
         { status: 400, headers }
@@ -134,9 +134,8 @@ export async function POST(req: Request) {
               </tr>
               <tr>
                 <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;"><strong style="color: #9ca3af;">Phone:</strong></td>
-                <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;">${
-                  phone || "Not provided"
-                }</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;">${phone || "Not provided"
+      }</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0;"><strong style="color: #9ca3af;">Agency:</strong></td>
@@ -145,11 +144,10 @@ export async function POST(req: Request) {
               <tr>
                 <td style="padding: 8px 0;"><strong style="color: #9ca3af;">Website:</strong></td>
                 <td style="padding: 8px 0;">
-                  ${
-                    website
-                      ? `<a href="${website}" style="color: #3b82f6; text-decoration: none;">${website}</a>`
-                      : "Not provided"
-                  }
+                  ${website
+        ? `<a href="${website}" style="color: #3b82f6; text-decoration: none;">${website}</a>`
+        : "Not provided"
+      }
                 </td>
               </tr>
             </table>
@@ -225,20 +223,18 @@ export async function POST(req: Request) {
               </tr>
               <tr>
                 <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;"><strong style="color: #9ca3af;">Phone:</strong></td>
-                <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;">${
-                  phone || "Not provided"
-                }</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;">${phone || "Not provided"
+      }</td>
               </tr>
-              ${
-                company
-                  ? `
+              ${company
+        ? `
               <tr>
                 <td style="padding: 8px 0;"><strong style="color: #9ca3af;">Company:</strong></td>
                 <td style="padding: 8px 0;">${company}</td>
               </tr>
               `
-                  : ""
-              }
+        : ""
+      }
             </table>
           </div>
 
@@ -320,9 +316,8 @@ export async function POST(req: Request) {
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f; width: 140px;"><strong style="color: #9ca3af;">Agency:</strong></td>
-                  <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;">${
-                    company || "Not provided"
-                  }</td>
+                  <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;">${company || "Not provided"
+      }</td>
                 </tr>
                 <tr>
                   <td style="padding: 8px 0; border-bottom: 1px solid #1f1f1f;"><strong style="color: #9ca3af;">Type:</strong></td>
@@ -331,11 +326,10 @@ export async function POST(req: Request) {
                 <tr>
                   <td style="padding: 8px 0;"><strong style="color: #9ca3af;">Website:</strong></td>
                   <td style="padding: 8px 0;">
-                    ${
-                      website
-                        ? `<a href="${website}" style="color: #3b82f6; text-decoration: none;">${website}</a>`
-                        : "Not provided"
-                    }
+                    ${website
+        ? `<a href="${website}" style="color: #3b82f6; text-decoration: none;">${website}</a>`
+        : "Not provided"
+      }
                   </td>
                 </tr>
               </table>
@@ -493,21 +487,16 @@ export async function POST(req: Request) {
     }
 
     return new NextResponse(
-      JSON.stringify({ 
-        success: true, 
-        message: "Form submitted successfully!" 
-      }),
+      JSON.stringify({ success: true, message: "Form submitted successfully!" }),
       { status: 200, headers }
     );
 
-  } catch (error: unknown) {
-    console.error("Server Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+  } catch (error) {
+    console.error("Error:", error);
     return new NextResponse(
-      JSON.stringify({ 
-        success: false, 
-        message: "Internal server error",
-        error: errorMessage 
+      JSON.stringify({
+        success: false,
+        message: "Internal server error"
       }),
       { status: 500, headers }
     );
