@@ -126,17 +126,18 @@ const DesktopNav = () => {
 
     return (
         <div className="fixed w-full bg-black/80 backdrop-blur-md z-[1000] border-b border-gray-800" ref={navbarRef}>
-            <div className="max-w-7xl flex flex-col lg:flex-row justify-between items-center py-4">
+            <div className="max-w-7xl flex flex-col lg:flex-row justify-between items-center py-4 px-5">
                 {/* Logo and Mobile Menu Toggle */}
-                <div className="flex items-center justify-between w-full lg:w-auto">
-                    <Link href="/" onClick={() => handleMouseEnter(null)}>
-                        <Image
-                            src="/logotext.png"
-                            alt=""
-                            className="max-h-[60px] object-cover"
-                            width={180}
-                            height={60}
-                        />
+                <div className="flex items-center justify-between">
+                    <Link href="/">
+                        <div className="w-[150px] h-[70px] relative">
+                            <Image
+                                src="/logotext.png"
+                                fill
+                                className="object-cover"
+                                alt="Nexo Mark Agency Logo"
+                            />
+                        </div>
                     </Link>
                     <div className="lg:hidden">
                         <button
@@ -154,7 +155,7 @@ const DesktopNav = () => {
                 </div>
 
                 {/* Desktop Navigation */}
-                <div className="hidden lg:flex flex-col lg:flex-row gap-8 lg:gap-10 text-lg font-medium">
+                <div className="hidden lg:flex flex-col lg:flex-row gap-8 lg:gap-10 text-[16px] font-light">
                     {navItems.map((item, index) => (
                         <div
                             key={index}

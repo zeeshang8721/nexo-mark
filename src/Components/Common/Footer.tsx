@@ -1,9 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { FiInstagram, FiLinkedin, FiFacebook } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    
+    // Basic validation
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Subscription failed");
+      }
+
+      setIsSuccess(true);
+      setEmail("");
+      setTimeout(() => setIsSuccess(false), 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Subscription failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-black px-6 lg:px-20 py-16 text-white">
       {/* TOP SECTION: Brand + Newsletter */}
@@ -17,7 +65,7 @@ const Footer = () => {
             Sign up for our <span className="text-[#FDFDFE]">Newsletter</span>
           </p>
 
-          <div className="relative w-full md:w-[400px] sm:max-w-md">
+          <form onSubmit={handleSubmit} className="relative w-full md:w-[400px] sm:max-w-md">
             {/* Left Icon */}
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
               <Mail size={20} />
@@ -26,15 +74,49 @@ const Footer = () => {
             {/* Input */}
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               className="w-full bg-white text-black py-3 pl-12 pr-12 rounded-md focus:outline-none"
+              disabled={isSubmitting}
             />
 
             {/* Right Arrow Button */}
-            <button className="absolute cursor-pointer right-1 top-1/2 -translate-y-1/2 bg-black text-white p-2 rounded-md ">
-              <ArrowRight size={20} />
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className="absolute cursor-pointer right-1 top-1/2 -translate-y-1/2 bg-black text-white p-2 rounded-md hover:bg-gray-800 transition"
+            >
+              {isSubmitting ? (
+                <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <ArrowRight size={20} />
+              )}
             </button>
-          </div>
+          </form>
+
+          {/* Error Message */}
+          {error && (
+            <motion.p 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-red-400 text-sm mt-2"
+            >
+              {error}
+            </motion.p>
+          )}
+
+          {/* Success Message */}
+          {isSuccess && (
+            <motion.p 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-green-400 text-sm mt-2"
+            >
+              Thanks for subscribing! Check your email for confirmation.
+            </motion.p>
+          )}
+
           <p className="text-[#C3C5C6] text-sm mt-3">
             or reach us at:{" "}
             <span className="text-white underline underline-offset-4">
@@ -154,7 +236,7 @@ const Footer = () => {
               <FiLinkedin className="h-5 w-5" />
             </a>
             <a 
-              href="https://facebook.com" 
+              href="https://www.facebook.com/nexomark.agency" 
               target="_blank" 
               rel="noopener noreferrer"
               className="bg-[#1E1E1E] hover:bg-[#2E2E2E] p-3 rounded-full transition-all duration-300"
