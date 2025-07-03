@@ -69,7 +69,7 @@ export default function ContactUs() {
     setError({ show: false, message: "" });
 
     try {
-      const response = await fetch(`${window.location.origin}/api/contact`, {
+      const response = await fetch('https://nexomark.agency/api/contact', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
