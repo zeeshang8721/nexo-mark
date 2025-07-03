@@ -13,6 +13,7 @@ import {
   RiHeartLine,
   RiTeamLine,
 } from "react-icons/ri";
+import { Drawer } from "vaul";
 
 interface NavItemChild {
   title: string;
@@ -227,7 +228,7 @@ const DesktopNav = () => {
         {/* Logo and Mobile Menu Toggle */}
         <div className="flex items-center justify-between w-full lg:w-auto">
           <Link href="/" className="focus:outline-none">
-            <div className="w-[150px] h-[70px] relative">
+            <div className="w-[150px] h-[70px]">
               <Image
                 src="/logotext.png"
                 width={150}
@@ -312,103 +313,107 @@ const DesktopNav = () => {
           </Link>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden fixed top-[90px] left-0 w-full h-[calc(100vh-90px)] bg-black/95 backdrop-blur-lg z-40 overflow-y-auto">
-            <div className="container mx-auto px-6 pt-5 pb-10">
-              <div className="flex flex-col space-y-6 text-xl">
-                {navItems.map((item, index) => (
-                  <div key={index} className="border-b border-gray-800 pb-4">
-                    <div
-                      className={`flex items-center justify-between ${
-                        item.children ? "cursor-pointer" : ""
-                      }`}
-                      onClick={() => {
-                        if (item.children) {
-                          toggleMobileItem(item.label);
-                        } else {
-                          setIsMobileMenuOpen(false);
-                        }
-                      }}
-                    >
-                      <Link
-                        href={item.href}
-                        className={`${
-                          selectedItem === item.label.toLowerCase()
-                            ? "text-blue-400"
-                            : "text-white"
-                        } focus:outline-none`}
-                        onClick={(e) => {
+        {/* Mobile Navigation Drawer */}
+        <Drawer.Root open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <Drawer.Portal>
+            <Drawer.Overlay className="fixed inset-0 bg-black/40 z-40" />
+            <Drawer.Content className="fixed bottom-0 left-0 top-[100px] right-0 max-h-[90%] rounded-t-[10px] bg-black/95 backdrop-blur-lg z-50 border-t border-gray-800 flex flex-col">
+              <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-gray-600 mt-2 mb-4" />
+              <div className="container mx-auto px-6 pt-2 pb-10 overflow-y-auto">
+                <div className="flex flex-col space-y-6 text-xl">
+                  {navItems.map((item, index) => (
+                    <div key={index} className="border-b border-gray-800 pb-4">
+                      <div
+                        className={`flex items-center justify-between ${
+                          item.children ? "cursor-pointer" : ""
+                        }`}
+                        onClick={() => {
                           if (item.children) {
-                            e.preventDefault();
+                            toggleMobileItem(item.label);
                           } else {
-                            handleMouseEnter(null);
+                            setIsMobileMenuOpen(false);
                           }
                         }}
                       >
-                        {item.label}
-                      </Link>
-                      {item.children && (
-                        <IoIosArrowForward
-                          className={`transition-transform ${
-                            expandedMobileItem === item.label ? "rotate-90" : ""
-                          }`}
-                        />
-                      )}
-                    </div>
+                        <Link
+                          href={item.href}
+                          className={`${
+                            selectedItem === item.label.toLowerCase()
+                              ? "text-blue-400"
+                              : "text-white"
+                          } focus:outline-none`}
+                          onClick={(e) => {
+                            if (item.children) {
+                              e.preventDefault();
+                            } else {
+                              handleMouseEnter(null);
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </Link>
+                        {item.children && (
+                          <IoIosArrowForward
+                            className={`transition-transform ${
+                              expandedMobileItem === item.label ? "rotate-90" : ""
+                            }`}
+                          />
+                        )}
+                      </div>
 
-                    {/* Mobile Dropdown Content */}
-                    {item.children && expandedMobileItem === item.label && (
-                      <div className="mt-4 ml-4 space-y-4">
-                        {item.isMegaMenu ? (
-                          <div className="grid grid-cols-1 gap-4">
-                            {item.children.map((child, i) => (
+                      {/* Mobile Dropdown Content */}
+                      {item.children && expandedMobileItem === item.label && (
+                        <div className="mt-4 ml-4 space-y-4">
+                          {item.isMegaMenu ? (
+                            <div className="grid grid-cols-1 gap-4">
+                              {item.children.map((child, i) => (
+                                <Link
+                                  key={i}
+                                  href={child.href}
+                                  className="flex items-start gap-3 p-3 rounded-lg bg-gray-900/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                  <div className="mt-1">{child.icon}</div>
+                                  <div>
+                                    <h4 className="font-medium text-white">{child.title}</h4>
+                                    <p className="text-sm text-gray-400">{child.description}</p>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          ) : (
+                            item.children.map((child, i) => (
                               <Link
                                 key={i}
                                 href={child.href}
-                                className="flex items-start gap-3 p-3 rounded-lg bg-gray-900/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-900/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
-                                <div className="mt-1">{child.icon}</div>
+                                {child.icon}
                                 <div>
-                                  <h4 className="font-medium text-white">{child.title}</h4>
-                                  <p className="text-sm text-gray-400">{child.description}</p>
+                                  <h4 className="font-medium">{child.title}</h4>
+                                  <p className="text-xs text-gray-400">{child.description}</p>
                                 </div>
                               </Link>
-                            ))}
-                          </div>
-                        ) : (
-                          item.children.map((child, i) => (
-                            <Link
-                              key={i}
-                              href={child.href}
-                              className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-900/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                              {child.icon}
-                              <div>
-                                <h4 className="font-medium">{child.title}</h4>
-                                <p className="text-xs text-gray-400">{child.description}</p>
-                              </div>
-                            </Link>
-                          ))
-                        )}
-                      </div>
-                    )}
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {/* Mobile CTA Button */}
+                  <div className="mt-8">
+                    <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="focus:outline-none">
+                      <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg py-3 px-6 shadow-lg hover:shadow-blue-500/30 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        Get Started
+                      </button>
+                    </Link>
                   </div>
-                ))}
-                {/* Mobile CTA Button */}
-                <div className="mt-8">
-                  <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="focus:outline-none">
-                    <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg py-3 px-6 shadow-lg hover:shadow-blue-500/30 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400">
-                      Get Started
-                    </button>
-                  </Link>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            </Drawer.Content>
+          </Drawer.Portal>
+        </Drawer.Root>
       </div>
     </div>
   );
