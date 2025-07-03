@@ -114,6 +114,18 @@ export default function ContactUs() {
         body: JSON.stringify(payload),
       });
 
+      // First check if the response exists and is OK
+      if (!response) {
+        throw new Error("No response from server");
+      }
+
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        throw new Error(`Unexpected response: ${text.substring(0, 100)}`);
+      }
+
       const result = await response.json();
 
       if (!response.ok || !result.success) {
@@ -135,15 +147,18 @@ export default function ContactUs() {
         });
       }, 5000);
     } catch (err) {
-      console.error(err);
+      console.error("Submission error:", err);
       setError({
         show: true,
-        message: err instanceof Error ? err.message : "Unexpected error occurred",
+        message: err instanceof Error ?
+          err.message :
+          "Failed to submit form. Please try again later.",
       });
       setIsSubmitted(false);
     }
   };
 
+  
   const projectTypes = [
     {
       value: "web-dev",
