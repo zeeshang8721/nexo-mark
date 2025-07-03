@@ -1,43 +1,24 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-export async function OPTIONS() {
-  return NextResponse.json(
-    { success: true, message: "CORS preflight successful" },
-    {
-      status: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    }
-  );
-}
-
-interface ContactData {
-  name: string;
-  email: string;
-  message: string;
-  phone?: string;
-  company?: string;
-  service: string;
-  budget?: string;
-  website?: string;
-  subject?: string;
-}
+// Email settings - using environment variables with fallbacks
+const adminEmail = process.env.ADMIN_EMAIL || "business@nexomark.agency";
+const adminPassword = process.env.ADMIN_PASSWORD || "your_smtp_password";
 
 export async function POST(req: Request) {
   try {
     const contentType = req.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
+    if (!contentType?.includes("application/json")) {
       return NextResponse.json(
         { success: false, message: "Invalid content type" },
-        { status: 400 }
+        {
+          status: 400,
+          headers: getCorsHeaders()
+        }
       );
     }
 
-    const data: ContactData = await req.json();
+    const data = await req.json();
 
     const {
       name,
@@ -51,21 +32,22 @@ export async function POST(req: Request) {
       subject,
     } = data;
 
-    const isAgency = subject === "Partnership Request";
-    const currentDate = new Date().toLocaleString();
-
+    // Validate required fields
     if (!name || !email || !message || !service) {
       return NextResponse.json(
         {
           success: false,
           message: "Name, email, service, and message are required",
         },
-        { status: 400 }
+        {
+          status: 400,
+          headers: getCorsHeaders()
+        }
       );
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL!;
-    const adminPassword = process.env.ADMIN_PASSWORD!;
+    const isAgency = subject === "Partnership Request";
+    const currentDate = new Date().toLocaleString();
 
     const transporter = nodemailer.createTransport({
       host: "smtp.zoho.com",
@@ -440,7 +422,7 @@ export async function POST(req: Request) {
     });
 
     // Send user confirmation
-       await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Nexomark" <${adminEmail}>`,
       to: email,
       subject: isAgency
@@ -449,16 +431,40 @@ export async function POST(req: Request) {
       html: userEmailContent,
     });
 
-   return NextResponse.json(
+    return NextResponse.json(
       { success: true, message: "Form submitted successfully!" },
-      { status: 200 }
+      {
+        status: 200,
+        headers: getCorsHeaders()
+      }
     );
 
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: getCorsHeaders()
+      }
     );
   }
+}
+
+// Helper function for CORS headers
+function getCorsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+export async function OPTIONS() {
+  return NextResponse.json(
+    { success: true },
+    {
+      headers: getCorsHeaders()
+    }
+  );
 }
