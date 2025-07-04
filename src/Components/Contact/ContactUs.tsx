@@ -1,476 +1,703 @@
 "use client";
-import React from "react";
-import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import { Calendar, Clock } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useForm, ValidationError } from '@formspree/react';
 
-type FormData = {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  service: string;
-  message: string;
-  date: string;
-  time: string;
-  budget: string;
-};
+import {
+    FiCheckCircle,
+    FiUser,
+    FiMail,
+    FiPhone,
+    FiBriefcase,
+    FiGlobe,
+    FiLayers,
+    FiTrendingUp,
+    FiFilm,
+    FiImage,
+    FiLink,
+    FiCode,
+    FiBox,
+    FiAlertTriangle,
+    FiX,
+} from "react-icons/fi";
 
-const ContactUs = () => {
-  const searchParams = useSearchParams();
-  const serviceParam = searchParams.get("service");
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-  } = useForm<FormData>();
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
+export default function ContactUs() {
+    const [activeTab, setActiveTab] = useState<"client" | "agency">("client");
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [error, setError] = useState<{ show: boolean; message: string }>({
+        show: false,
+        message: "",
+    });
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        service: "web-dev",
+        budget: "1k-5k",
+        message: "",
+        company: "",
+        website: "",
+    });
 
-  // Set the service from URL parameter on component mount
-  useEffect(() => {
-    if (serviceParam) {
-      setValue("service", decodeURIComponent(serviceParam));
-    }
-  }, [serviceParam, setValue]);
+    // Scroll to top on submission
+    useEffect(() => {
+        if (isSubmitted) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    }, [isSubmitted]);
 
-  const services = [
-    "Digital Marketing",
-    "Web Development",
-    "Web Design & UI/UX",
-    "Search Engine Optimization",
-    "Graphics Design",
-    "Branding Services",
-    "Social Media Management",
-    "Video Editing & Animation",
-    "Other",
-  ];
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
 
-  const budgetRanges = [
-    "$1,000 - $5,000",
-    "$5,000 - $15,000",
-    "$15,000 - $30,000",
-    "$30,000 - $50,000",
-    "$50,000+",
-    "Not sure yet",
-  ];
+    const handleWebsiteChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.trim().replace(/^https?:\/\//, "");
+        setFormData((prev) => ({
+            ...prev,
+            website: value ? `https://${value}` : "",
+        }));
+    };
 
-  const timeSlots = [
-    "09:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
-  ];
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitted(true);
+        setError({ show: false, message: "" });
 
-  const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
+        // Validate required fields
+        const requiredFields = ["name", "email", "message"];
+        for (const field of requiredFields) {
+            if (!formData[field as keyof typeof formData]) {
+                setError({
+                    show: true,
+                    message: `Please fill in the ${field} field.`,
+                });
+                setIsSubmitted(false);
+                return;
+            }
+        }
 
-    try {
-      const response = await fetch("/api/contact/submit-form", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+        try {
+            const serviceMap: Record<string, string> = {
+                "web-dev": "Web Development",
+                "ui-ux": "UI/UX Design",
+                "digital-marketing": "Digital Marketing",
+                "seo": "SEO Optimization",
+                "link-building": "Link Building",
+                "graphics": "Graphics Design",
+                "video-editing": "Video Editing",
+                "3d-modeling": "3D Modeling",
+                "development": "Development Partnership",
+                "design": "Design Collaboration",
+                "marketing": "Marketing Alliance",
+                "content": "Content Partnership",
+            };
+
+            const budgetMap: Record<string, string> = {
+                "1k-5k": "$1,000 - $5,000",
+                "5k-10k": "$5,000 - $10,000",
+                "10k-20k": "$10,000 - $20,000",
+                "20k+": "$20,000+",
+                "custom": "Custom Budget",
+            };
+
+            const formPayload = new FormData();
+            formPayload.append("name", formData.name);
+            formPayload.append("email", formData.email);
+            formPayload.append("phone", formData.phone);
+            formPayload.append("service", serviceMap[formData.service] || formData.service);
+            if (formData.budget) {
+                formPayload.append("budget", budgetMap[formData.budget] || formData.budget);
+            }
+            formPayload.append("message", formData.message);
+            formPayload.append("company", formData.company);
+            formPayload.append("website", formData.website);
+            formPayload.append("subject", activeTab === "client" ? "Project Inquiry" : "Partnership Request");
+            formPayload.append("form-type", activeTab);
+
+            // Replace 'YOUR_FORMSPREE_ID' with your actual Formspree form ID
+            const response = await fetch("https://formspree.io/f/xblybbvn", {
+                method: "POST",
+                body: formPayload,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Form submission failed");
+            }
+
+            // Reset form after successful submission
+            setTimeout(() => {
+                setIsSubmitted(false);
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    service: "web-dev",
+                    budget: "1k-5k",
+                    message: "",
+                    company: "",
+                    website: "",
+                });
+            }, 5000);
+        } catch (err) {
+            console.error("Submission error:", err);
+            setError({
+                show: true,
+                message: err instanceof Error ?
+                    err.message :
+                    "Failed to submit form. Please try again later.",
+            });
+            setIsSubmitted(false);
+        }
+    };
+
+
+    const projectTypes = [
+        {
+            value: "web-dev",
+            label: "Web Development",
+            icon: <FiGlobe className="mr-2" />,
         },
-        body: JSON.stringify({
-          ...data,
-          date: selectedDate,
-          time: selectedTime,
-        }),
-      });
+        {
+            value: "ui-ux",
+            label: "UI/UX Design",
+            icon: <FiLayers className="mr-2" />,
+        },
+        {
+            value: "digital-marketing",
+            label: "Digital Marketing",
+            icon: <FiTrendingUp className="mr-2" />,
+        },
+        {
+            value: "seo",
+            label: "SEO Optimization",
+            icon: <FiTrendingUp className="mr-2" />,
+        },
+        {
+            value: "link-building",
+            label: "Link Building",
+            icon: <FiLink className="mr-2" />,
+        },
+        {
+            value: "graphics",
+            label: "Graphics Design",
+            icon: <FiImage className="mr-2" />,
+        },
+        {
+            value: "video-editing",
+            label: "Video Editing",
+            icon: <FiFilm className="mr-2" />,
+        },
+        {
+            value: "3d-modeling",
+            label: "3D Modeling",
+            icon: <FiBox className="mr-2" />,
+        },
+    ];
 
-      const result = await response.json();
+    const partnershipTypes = [
+        {
+            value: "development",
+            label: "Development Partnership",
+            icon: <FiCode className="mr-2" />,
+        },
+        {
+            value: "design",
+            label: "Design Collaboration",
+            icon: <FiLayers className="mr-2" />,
+        },
+        {
+            value: "marketing",
+            label: "Marketing Alliance",
+            icon: <FiTrendingUp className="mr-2" />,
+        },
+        {
+            value: "content",
+            label: "Content Partnership",
+            icon: <FiFilm className="mr-2" />,
+        },
+    ];
 
-      if (result.success) {
-        setSubmitSuccess(true);
-        reset();
-        setSelectedDate("");
-        setSelectedTime("");
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    const budgetOptions = [
+        { value: "1k-5k", label: "$1,000 - $5,000" },
+        { value: "5k-10k", label: "$5,000 - $10,000" },
+        { value: "10k-20k", label: "$10,000 - $20,000" },
+        { value: "20k+", label: "$20,000+" },
+        { value: "custom", label: "Custom Budget" },
+    ];
 
-  return (
-    <section
-      className="relative pt-40 pb-26 bg-black overflow-hidden border-t border-neutral-900"
-      id="contact"
-    >
-      {/* Background elements */}
-      <motion.div
-        animate={{
-          opacity: [0.8, 0.9, 0.8],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-        className="absolute inset-0 pointer-events-none"
-      >
-        <div className="absolute top-1/3 left-[20%] w-[300px] h-[300px] rounded-full bg-purple-500 blur-[120px] opacity-[0.08]"></div>
-        <div className="absolute bottom-1/4 right-[15%] w-[400px] h-[400px] rounded-full bg-blue-500 blur-[150px] opacity-[0.06]"></div>
-      </motion.div>
-
-      <div className="container relative z-10 px-6 mx-auto">
-        <div className="max-w-6xl mx-auto pt-10">
-          {/* Section header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-normal text-neutral-100 mb-6">
-            {`  Let's Work Together`}
-            </h2>
-            <div className="h-[2px] w-24 bg-gradient-to-r from-neutral-600 to-neutral-400 mx-auto mb-8"></div>
-            <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-             {` Ready to elevate your digital presence? Share your project details
-              and we'll get back to you within 24 hours.`}
-            </p>
-          </motion.div>
-
-          {/* Contact form */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="bg-neutral-900 rounded-xl p-8 md:p-12 border border-neutral-800"
-          >
-            {submitSuccess ? (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg
-                    className="w-10 h-10 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-medium text-neutral-100 mb-3">
-                  Message Sent Successfully!
-                </h3>
-                <p className="text-neutral-400 mb-6">
-                {`  Thank you for contacting us. We've received your details and
-                  will get back to you shortly.`}
-                </p>
-                <button
-                  onClick={() => setSubmitSuccess(false)}
-                  className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-neutral-100 transition-colors duration-300"
+    return (
+        <div className="min-h-screen pt-40 bg-gradient-to-br from-gray-900 to-black text-white py-20 px-4 sm:px-6 lg:px-8">
+            <AnimatePresence>
+                {error.show && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed bottom-6 right-6 z-50"
+                    >
+                        <div className="bg-red-900/80 backdrop-blur-md border border-red-700 rounded-xl shadow-2xl overflow-hidden w-full max-w-md">
+                            <div className="p-4 flex items-start">
+                                <div className="flex-shrink-0 pt-0.5">
+                                    <FiAlertTriangle className="h-6 w-6 text-red-300" />
+                                </div>
+                                <div className="ml-3 flex-1">
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-sm font-medium text-red-100">
+                                            Submission Error
+                                        </h3>
+                                        <button
+                                            onClick={() => setError({ show: false, message: "" })}
+                                            className="text-red-300 hover:text-white focus:outline-none"
+                                        >
+                                            <FiX className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                    <div className="mt-1 text-sm text-red-200">
+                                        {error.message}
+                                    </div>
+                                </div>
+                            </div>
+                            <motion.div
+                                initial={{ width: "100%" }}
+                                animate={{ width: 0 }}
+                                transition={{ duration: 5, ease: "linear" }}
+                                className="h-1 bg-red-700"
+                            />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <div className="max-w-7xl mx-auto">
+                {/* Header Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                    className="text-center mb-16"
                 >
-                  Send Another Message
-                </button>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="grid md:grid-cols-2 gap-8"
-              >
-                {/* Left column */}
-                <div className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-neutral-300 mb-2"
+                    <motion.h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                        <span className="block">
+                            <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-neutral-200 to-neutral-300/90">
+                                Professional
+                            </span>{" "}
+                            Digital Solutions
+                        </span>
+                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-neutral-200 to-neutral-300/90">
+                            Fast & Reliable Delivery
+                        </span>
+                    </motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                        className="text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto"
                     >
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      {...register("name", { required: "Name is required" })}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500"
-                      placeholder="John Doe"
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
+                        From web development to video editing, we deliver exceptional
+                        results in days, not months. Get started with our premium services
+                        today.
+                    </motion.p>
+                </motion.div>
 
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-neutral-300 mb-2"
-                    >
-                      Email <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: {
-                          value:
-                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                          message: "Invalid email address",
-                        },
-                      })}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500"
-                      placeholder="john@company.com"
-                    />
-
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="phone"
-                      className="block text-neutral-300 mb-2"
-                    >
-                      Phone Number
-                    </label>
-                    <input
-                      id="phone"
-                      type="tel"
-                      {...register("phone")}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500"
-                      placeholder="+1 (555) 123-4567"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="company"
-                      className="block text-neutral-300 mb-2"
-                    >
-                      Company Name
-                    </label>
-                    <input
-                      id="company"
-                      type="text"
-                      {...register("company")}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500"
-                      placeholder="Acme Inc."
-                    />
-                  </div>
-                </div>
-
-                {/* Right column */}
-                <div className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="service"
-                      className="block text-neutral-300 mb-2"
-                    >
-                      Service Interested In{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="service"
-                      {...register("service", {
-                        required: "Please select a service",
-                      })}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500 appearance-none"
-                    >
-                      <option value="">Select a service</option>
-                      {services.map((service) => (
-                        <option key={service} value={service}>
-                          {service}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.service && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.service.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="budget"
-                      className="block text-neutral-300 mb-2"
-                    >
-                      Project Budget
-                    </label>
-                    <select
-                      id="budget"
-                      {...register("budget")}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500 appearance-none"
-                    >
-                      <option value="">Select budget range</option>
-                      {budgetRanges.map((range) => (
-                        <option key={range} value={range}>
-                          {range}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Date and Time Selection */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="date"
-                        className="block text-neutral-300 mb-2"
-                      >
-                        Preferred Date
-                      </label>
-                      <div className="relative">
-                        <input
-                          id="date"
-                          type="date"
-                          value={selectedDate}
-                          onChange={(e) => setSelectedDate(e.target.value)}
-                          min={new Date().toISOString().split("T")[0]}
-                          className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500 appearance-none"
-                        />
-                        <Calendar className="absolute right-3 top-3.5 h-5 w-5 text-neutral-400 pointer-events-none" />
-                      </div>
+                {/* Tabs */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex justify-center mb-12"
+                >
+                    <div className="inline-flex bg-neutral-900 rounded-full p-1 border border-neutral-800">
+                        {["client", "agency"].map((type) => (
+                            <button
+                                key={type}
+                                onClick={() => setActiveTab(type as "client" | "agency")}
+                                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 flex items-center ${activeTab === type
+                                    ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg"
+                                    : "text-neutral-300 hover:text-white"
+                                    }`}
+                            >
+                                {type === "client" ? (
+                                    <>
+                                        <FiUser className="mr-2" />
+                                        Client Project
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiBriefcase className="mr-2" />
+                                        Agency Partner
+                                    </>
+                                )}
+                            </button>
+                        ))}
                     </div>
+                </motion.div>
 
-                    <div>
-                      <label
-                        htmlFor="time"
-                        className="block text-neutral-300 mb-2"
-                      >
-                        Preferred Time
-                      </label>
-                      <div className="relative">
-                        <select
-                          id="time"
-                          value={selectedTime}
-                          onChange={(e) => setSelectedTime(e.target.value)}
-                          disabled={!selectedDate}
-                          className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500 appearance-none"
-                        >
-                          <option value="">Select time</option>
-                          {timeSlots.map((time) => (
-                            <option key={time} value={time}>
-                              {time}
-                            </option>
-                          ))}
-                        </select>
-                        <Clock className="absolute right-3 top-3.5 h-5 w-5 text-neutral-400 pointer-events-none" />
-                      </div>
-                    </div>
-                  </div>
+                {/* Form Container */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="bg-neutral-900/80 rounded-2xl p-8 sm:p-10 shadow-2xl border border-neutral-800 max-w-4xl mx-auto backdrop-blur-sm"
+                >
+                    <AnimatePresence mode="wait">
+                        {isSubmitted ? (
+                            <motion.div
+                                key="success"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                className="text-center py-12"
+                            >
+                                <motion.div
+                                    animate={{
+                                        scale: [1, 1.1, 1],
+                                        rotate: [0, 10, -10, 0],
+                                    }}
+                                    transition={{
+                                        duration: 1,
+                                        ease: "backInOut",
+                                    }}
+                                    className="inline-block mb-6"
+                                >
+                                    <FiCheckCircle className="text-green-400 text-6xl" />
+                                </motion.div>
+                                <h3 className="text-2xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200">
+                                    Request Received!
+                                </h3>
+                                <p className="text-neutral-300 mb-6 max-w-md mx-auto">
+                                    Our team will review your{" "}
+                                    {activeTab === "client"
+                                        ? "project details"
+                                        : "partnership request"}
+                                    and get back to you within 24 hours with a tailored proposal.
+                                </p>
+                                <div className="mt-10">
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 0.5 }}
+                                        className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden"
+                                    >
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: "100%" }}
+                                            transition={{ duration: 5, ease: "linear" }}
+                                            className="h-full bg-gradient-to-r from-blue-500 to-blue-700"
+                                        />
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.form
+                                key="form"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onSubmit={handleSubmit}
+                            >
+                                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                                    {/* Common Fields */}
+                                    <div className="sm:col-span-2">
+                                        <label
+                                            htmlFor="name"
+                                            className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                        >
+                                            Full Name
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <FiUser className="text-neutral-500" />
+                                            </div>
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleChange}
+                                                required
+                                                className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full pl-10 p-3 transition-all"
+                                                placeholder="Your full name"
+                                            />
+                                        </div>
+                                    </div>
 
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="block text-neutral-300 mb-2"
-                    >
-                      Project Details <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      {...register("message", {
-                        required:
-                          "Please share some details about your project",
-                      })}
-                      className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-neutral-100 placeholder-neutral-500"
-                      placeholder="Tell us about your project goals, timeline, and any specific requirements..."
-                    ></textarea>
-                    {errors.message && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.message.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                                    <div>
+                                        <label
+                                            htmlFor="email"
+                                            className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                        >
+                                            Email Address
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <FiMail className="text-neutral-500" />
+                                            </div>
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                required
+                                                className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full pl-10 p-3 transition-all"
+                                                placeholder="your@email.com"
+                                            />
+                                        </div>
+                                    </div>
 
-                {/* Submit button */}
-                <div className="md:col-span-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg text-neutral-100 font-medium transition-all duration-300 flex items-center justify-center"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : (
-                      "Send Message"
-                    )}
-                  </button>
-                </div>
-              </form>
-            )}
-          </motion.div>
+                                    <div>
+                                        <label
+                                            htmlFor="phone"
+                                            className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                        >
+                                            Phone Number
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <FiPhone className="text-neutral-500" />
+                                            </div>
+                                            <input
+                                                type="tel"
+                                                id="phone"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleChange}
+                                                className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full pl-10 p-3 transition-all"
+                                                placeholder="+1 (555) 000-0000"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Conditional Fields */}
+                                    {activeTab === "client" ? (
+                                        <>
+                                            <div className="sm:col-span-2">
+                                                <label className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider">
+                                                    Service Needed
+                                                </label>
+
+                                                {/* Mobile View (Dropdown) */}
+                                                <div className="lg:hidden">
+                                                    <select
+                                                        name="service"
+                                                        value={formData.service}
+                                                        onChange={handleChange}
+                                                        className="w-full px-4 py-3 rounded-lg bg-neutral-800 text-neutral-100 border border-neutral-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                                    >
+                                                        <option value="" disabled>
+                                                            Select a service
+                                                        </option>
+                                                        {projectTypes.map((type) => (
+                                                            <option key={type.value} value={type.value}>
+                                                                {type.label}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                {/* Desktop View (Grid with buttons) */}
+                                                <div className="hidden lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                    {projectTypes.map((type) => (
+                                                        <div key={type.value} className="flex items-center">
+                                                            <input
+                                                                id={`project-${type.value}`}
+                                                                name="service"
+                                                                type="radio"
+                                                                value={type.value}
+                                                                checked={formData.service === type.value}
+                                                                onChange={handleChange}
+                                                                className="hidden peer"
+                                                            />
+                                                            <label
+                                                                htmlFor={`project-${type.value}`}
+                                                                className="w-full flex items-center gap-3 text-sm font-medium py-3 px-4 rounded-lg bg-neutral-800/50 border border-neutral-700 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 peer-checked:text-blue-400 cursor-pointer transition-all hover:bg-neutral-800"
+                                                            >
+                                                                <span className="text-xl">{type.icon}</span>
+                                                                <span>{type.label}</span>
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className=" col-span-2">
+                                                <label
+                                                    htmlFor="budget"
+                                                    className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                                >
+                                                    Project Budget
+                                                </label>
+                                                <div className="relative">
+                                                    <select
+                                                        id="budget"
+                                                        name="budget"
+                                                        value={formData.budget}
+                                                        onChange={handleChange}
+                                                        required
+                                                        className="w-full bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block p-3 appearance-none"
+                                                    >
+                                                        {budgetOptions.map((option) => (
+                                                            <option key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="sm:col-span-2">
+                                                <label
+                                                    htmlFor="company"
+                                                    className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                                >
+                                                    Agency Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="company"
+                                                    name="company"
+                                                    value={formData.company}
+                                                    onChange={handleChange}
+                                                    required
+                                                    className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition-all"
+                                                    placeholder="Your agency name"
+                                                />
+                                            </div>
+
+                                            <div className="sm:col-span-2">
+                                                <label
+                                                    htmlFor="website"
+                                                    className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                                >
+                                                    Agency Website
+                                                </label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <span className="text-neutral-500">https://</span>
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        id="website"
+                                                        name="website"
+                                                        value={formData.website.replace("https://", "")}
+                                                        onChange={handleWebsiteChange}
+                                                        className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full pl-16 p-3 transition-all"
+                                                        placeholder="yourdomain.com"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="sm:col-span-2">
+                                                <label className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider">
+                                                    Partnership Type
+                                                </label>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    {partnershipTypes.map((type) => (
+                                                        <div key={type.value} className="flex items-center">
+                                                            <input
+                                                                id={`partner-${type.value}`}
+                                                                name="service"
+                                                                type="radio"
+                                                                value={type.value}
+                                                                checked={formData.service === type.value}
+                                                                onChange={handleChange}
+                                                                className="hidden peer"
+                                                            />
+                                                            <label
+                                                                htmlFor={`partner-${type.value}`}
+                                                                className="w-full flex items-center text-sm font-medium py-3 px-4 rounded-lg bg-neutral-800/50 border border-neutral-700 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 peer-checked:text-blue-400 cursor-pointer transition-all hover:bg-neutral-800"
+                                                            >
+                                                                {type.icon}
+                                                                {type.label}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <div className="sm:col-span-2">
+                                        <label
+                                            htmlFor="message"
+                                            className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
+                                        >
+                                            {activeTab === "client"
+                                                ? "Project Details"
+                                                : "Partnership Details"}
+                                        </label>
+                                        <textarea
+                                            id="message"
+                                            name="message"
+                                            rows={6}
+                                            value={formData.message}
+                                            onChange={handleChange}
+                                            required
+                                            className="bg-neutral-800/50 border border-neutral-700 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition-all"
+                                            placeholder={
+                                                activeTab === "client"
+                                                    ? "Describe your project requirements, goals, and any specific needs"
+                                                    : "Describe your partnership proposal and collaboration ideas"
+                                            }
+                                        />
+                                    </div>
+                                </div>
+
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.9, duration: 0.5 }}
+                                    className="flex justify-center mt-12"
+                                >
+                                    <motion.button
+                                        whileHover={{ scale: 1.03 }}
+                                        whileTap={{ scale: 0.97 }}
+                                        type="submit"
+                                        className="group cursor-pointer relative flex justify-center items-center px-8 py-4 text-sm font-semibold tracking-wider text-white rounded-full overflow-hidden transition-all duration-500 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 w-full max-w-xs sm:max-w-[280px] shadow-lg hover:shadow-xl"
+                                    >
+                                        <span className="relative z-10 flex items-center">
+                                            {activeTab === "client"
+                                                ? "GET QUOTE NOW"
+                                                : "REQUEST PARTNERSHIP"}
+                                            <svg
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 16 16"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="ml-3 transition-all duration-300 group-hover:translate-x-1"
+                                            >
+                                                <path
+                                                    d="M4.66669 11.3334L11.3334 4.66669"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M4.66669 4.66669H11.3334V11.3334"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </motion.button>
+                                </motion.div>
+                            </motion.form>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+            </div>
         </div>
-      </div>
-
-      {/* Floating elements */}
-      <motion.div
-        animate={{
-          y: [0, 15, 0],
-          rotate: [0, 5, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute top-1/3 left-8 w-2 h-2 rounded-full bg-neutral-400 opacity-60"
-      />
-      <motion.div
-        animate={{
-          y: [0, -20, 0],
-          rotate: [0, -3, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          delay: 2,
-          ease: "easeInOut",
-        }}
-        className="absolute bottom-1/4 right-10 w-3 h-3 rounded-full bg-neutral-400 opacity-40"
-      />
-    </section>
-  );
-};
-
-export default ContactUs;
+    );
+}

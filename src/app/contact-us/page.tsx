@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import ContactUs from "../../Components/Contact/ContactUs";
 
 export const metadata = {
-  title: "Contact Us - Nexo Mark | Web Development & Digital Solutions",
+  title: "Contact Nexo Mark | Web Development & Digital Solutions",
   description:
     "Have a project in mind? Contact Nexo Mark to turn your ideas into high-impact websites, SEO campaigns, and digital marketing strategies.",
   keywords: [
