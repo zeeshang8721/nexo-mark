@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientWrapper from "@/Components/Common/ClientWrapper";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   icons: {
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        <Analytics />
         <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
