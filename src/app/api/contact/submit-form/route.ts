@@ -87,12 +87,12 @@ Message: ${message}
             success: true,
             message: "Form submitted successfully!",
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Email Error:", error);
         return NextResponse.json({
             success: false,
             message: "Error sending email",
-            error: error.toString(),
+            error: error instanceof Error ? error.message : String(error),
         });
     }
 }
