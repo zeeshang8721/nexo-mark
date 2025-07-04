@@ -1,8 +1,6 @@
 "use client";
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useForm, ValidationError } from '@formspree/react';
-
 import {
     FiCheckCircle,
     FiUser,
