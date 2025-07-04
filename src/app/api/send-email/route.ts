@@ -3,51 +3,65 @@ import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
   try {
-    // Verify environment variables exist
-    if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
-      throw new Error('Email credentials not configured');
-    }
-
-    const { name, email, message } = await request.json();
+    const { name, email, phone, service, budget, message, company, website, subject } = await request.json();
 
     // Create transporter
     const transporter = nodemailer.createTransport({
-      host: 'smtp.zoho.com',
-      port: 465,
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '465'),
       secure: true,
       auth: {
         user: process.env.ADMIN_EMAIL,
         pass: process.env.ADMIN_PASSWORD,
       },
+      tls: {
+        rejectUnauthorized: false // For testing only (remove in production)
+      }
     });
 
-    // Verify connection configuration
-    await transporter.verify().catch(err => {
-      console.error('SMTP connection error:', err);
-      throw new Error('Failed to connect to SMTP server');
-    });
-
-    // Send mail
-    const info = await transporter.sendMail({
-      from: process.env.ADMIN_EMAIL,
+    // Email content
+    const mailOptions = {
+      from: `"NexoMark Contact Form" <${process.env.ADMIN_EMAIL}>`,
       to: process.env.ADMIN_EMAIL,
       replyTo: email,
-      subject: `New Contact Form Submission from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
-      html: `<div>Name: ${name}<br>Email: ${email}<br>Message: ${message}</div>`,
-    });
+      subject: `New ${subject}: ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">New ${subject}</h2>
+          <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+          ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+          ${company ? `<p><strong>Company:</strong> ${company}</p>` : ''}
+          ${website ? `<p><strong>Website:</strong> <a href="${website}">${website}</a></p>` : ''}
+          <p><strong>Service:</strong> ${service}</p>
+          ${budget ? `<p><strong>Budget:</strong> ${budget}</p>` : ''}
+          <h3 style="color: #2563eb; margin-top: 20px;">Message:</h3>
+          <div style="background: #f3f4f6; padding: 15px; border-radius: 5px;">
+            ${message.replace(/\n/g, '<br>')}
+          </div>
+        </div>
+      `,
+      text: `
+        New ${subject}
+        From: ${name} <${email}>
+        ${phone ? `Phone: ${phone}` : ''}
+        ${company ? `Company: ${company}` : ''}
+        ${website ? `Website: ${website}` : ''}
+        Service: ${service}
+        ${budget ? `Budget: ${budget}` : ''}
+        
+        Message:
+        ${message}
+      `
+    };
 
-    console.log('Message sent:', info.messageId);
+    // Send email
+    await transporter.sendMail(mailOptions);
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Full error details:', error);
+    console.error('Email sending error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error',
-        details: process.env.NODE_ENV === 'development' ? error : undefined
-      },
+      { success: false, error: 'Failed to send message' },
       { status: 500 }
     );
   }
