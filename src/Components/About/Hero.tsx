@@ -46,7 +46,7 @@ const AboutHero = () => {
           <motion.a
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
-            href="#our-story"
+            href="/contact-us"
             className="group relative inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold text-white rounded-full transition-all duration-300 border border-white hover:bg-white hover:text-black"
           >
             <span className="relative z-10">Work With Us</span>
