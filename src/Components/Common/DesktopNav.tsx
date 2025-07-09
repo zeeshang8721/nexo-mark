@@ -138,7 +138,7 @@ const DesktopNav = () => {
                 {
                     title: "Our Team",
                     icon: <RiTeamLine className="text-purple-400" />,
-                    href: "/about/team",
+                    href: "/our-team",
                     description: "Meet the experts behind the work",
                 },
             ],
