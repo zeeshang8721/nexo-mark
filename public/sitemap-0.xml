@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://www.nexomark.agency/policies/cookie-policy</loc><lastmod>2025-07-01T13:28:53.590Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/policies/privacy-policy</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/policies/terms-&amp;-conditions</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/services/3d</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/services/graphics-designing</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/partners-program</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/services/ui-ux</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/services/website-development</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/contact-us</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/about-us</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/services/video-editing</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.nexomark.agency/services/digital-marketing</loc><lastmod>2025-07-01T13:28:53.593Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/our-team</loc><lastmod>2025-07-21T10:11:03.254Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/partners-program</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/policies/cookie-policy</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/about-us</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/contact-us</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/services/digital-marketing</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/services/graphics-designing</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/services/ui-ux</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/services/video-editing</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/services/website-development</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/policies/privacy-policy</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/services/3d</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://nexomark.agency/policies/terms-and-conditions</loc><lastmod>2025-07-21T10:11:03.256Z</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>

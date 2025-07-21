@@ -95,7 +95,7 @@ export const PartnerWorkflow = () => {
         {/* CTA */}
         <div className="flex justify-center mt-14">
           <div className="group relative flex justify-between items-center px-8 py-4 text-sm font-semibold text-white hover:text-black rounded-full overflow-hidden transition-all duration-500 bg-transparent border border-white hover:bg-white">
-            <Link href="/contact" className="relative z-10 mr-8">
+            <Link href="/contact-us" className="relative z-10 mr-8">
               Become a Partner
             </Link>
             <svg

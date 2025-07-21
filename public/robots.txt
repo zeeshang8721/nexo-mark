@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://www.nexomark.agency
+Host: https://nexomark.agency
 
 # Sitemaps
-Sitemap: https://www.nexomark.agency/sitemap.xml
+Sitemap: https://nexomark.agency/sitemap.xml

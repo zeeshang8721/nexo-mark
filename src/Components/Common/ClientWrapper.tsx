@@ -7,6 +7,7 @@ import HomeOutro from "./HomeOutro";
 import Footer from "./Footer";
 import DesktopNav from "./DesktopNav";
 import { FaWhatsapp } from "react-icons/fa";
+import MobileNav from "./MobileNav";
 
 export default function ClientWrapper({
   children,
@@ -29,7 +30,13 @@ export default function ClientWrapper({
           <FaWhatsapp className="text-4xl" />
         </a>
       </div>
-      <DesktopNav />
+      <div className="md:block hidden">
+        <DesktopNav />
+      </div>
+      <div className="block md:hidden">
+
+        <MobileNav />
+      </div>
       <main className="flex-grow">{children}</main>
       <Footer />
     </div>
