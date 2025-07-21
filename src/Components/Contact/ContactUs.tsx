@@ -399,9 +399,9 @@ export default function ContactUs() {
                                 exit={{ opacity: 0 }}
                                 onSubmit={handleSubmit}
                             >
-                                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                                <div className="grid grid-cols-1 gap-4 sm:gap-8 sm:grid-cols-2">
                                     {/* Common Fields */}
-                                    <div className="sm:col-span-2">
+                                    <div className="col-span-2">
                                         <label
                                             htmlFor="name"
                                             className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
@@ -425,7 +425,7 @@ export default function ContactUs() {
                                         </div>
                                     </div>
 
-                                    <div>
+                                    <div className="col-span-2">
                                         <label
                                             htmlFor="email"
                                             className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
@@ -449,7 +449,7 @@ export default function ContactUs() {
                                         </div>
                                     </div>
 
-                                    <div>
+                                    <div className="col-span-2">
                                         <label
                                             htmlFor="phone"
                                             className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
@@ -475,7 +475,7 @@ export default function ContactUs() {
                                     {/* Conditional Fields */}
                                     {activeTab === "client" ? (
                                         <>
-                                            <div className="sm:col-span-2">
+                                            <div className="col-span-2">
                                                 <label className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider">
                                                     Service Needed
                                                 </label>
@@ -524,7 +524,7 @@ export default function ContactUs() {
                                                 </div>
                                             </div>
 
-                                            <div className=" col-span-2">
+                                            <div className="col-span-2">
                                                 <label
                                                     htmlFor="budget"
                                                     className="block text-sm font-medium text-neutral-300 mb-2 uppercase tracking-wider"
