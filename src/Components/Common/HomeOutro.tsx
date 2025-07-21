@@ -13,7 +13,7 @@ export default function HomeOutro() {
 
   return (
     <div
-      className={`fixed inset-0 bg-black flex justify-center items-center z-[9999] ${
+      className={`fixed inset-0 bg-black flex justify-center items-center z-[999999] ${
         hideOutro ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
